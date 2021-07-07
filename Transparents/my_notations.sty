@@ -1,0 +1,67 @@
+% =====================================================================
+%  Notations
+% =====================================================================
+%
+% Need the following packages
+%
+% amsmath, xspace, xifthen, mathtools
+
+
+
+% Force math mode ------------------------------------------------ 
+\newcommand{\enm}[1]{\ensuremath{#1}\xspace}
+
+% Formating ----------------------------------------------
+\newcommand{\upspecif}[3]{\ifthenelse{\isempty{#1}}{\enm{#2}}{\enm{#2^{#3}}}}
+\newcommand{\upif}[2]{\ifthenelse{\isempty{#1}}{\enm{#2}}{\enm{#2^{#1}}}}
+\newcommand{\uppif}[2]{\ifthenelse{\isempty{#1}}{\enm{#2}}{\enm{#2^{(#1)}}}}
+\newcommand{\downspecif}[3]{\ifthenelse{\isempty{#1}}{\enm{#2}}{\enm{#2_{#3}}}}
+\newcommand{\downif}[2]{\ifthenelse{\isempty{#1}}{\enm{#2}}{\enm{#2_{#1}}}}
+\newcommand{\ddownif}[3]{\ifthenelse{\isempty{#1}}{\enm{#3}}{\enm{#3_{{#1},{#2}}}}}
+\newcommand{\downpif}[2]{\ifthenelse{\isempty{#1}}{\enm{#2}}{\enm{#2_{(#1)}}}}
+
+% General ------------------------------------------------
+\def\Rsetdef{\enm{\mathbb{R}}}
+\newcommand{\Rset}[1][]{\upif{#1}{\Rsetdef}}
+\newcommand{\vect}[1]{\enm{\boldsymbol{\mathbf{#1}}}}
+\newcommand{\mat}[1]{\enm{\boldsymbol{\mathbf{#1}}}}
+\newcommand{\matcol}[2]{\upif{#1}{\boldsymbol{\mathbf{#2}}}}
+\newcommand{\matrow}[2]{\downif{#1}{\boldsymbol{\mathbf{#2}}}}
+%\newcommand{\matel}[3]{\ddownif{#1}{#2}{\boldsymbol{\mathbf{#3}}}}
+\newcommand{\matel}[3]{\enm{{\boldsymbol{\mathbf{#3}}}_{{#1}{#2}}}}
+\newcommand{\elinst}[2]{{#2}^{{#1}}}  % #1-th instance of #2
+\renewcommand{\vec}[1]{\vect{#1}}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Tr}{Tr} % trace
+\DeclarePairedDelimiterX\innerp[2]{\langle}{\rangle}{#1,#2}
+\DeclarePairedDelimiterX\outerp[2]{(}{)}{#1 \otimes #2}
+\DeclareMathOperator{\card}{Card} % cardinality of a set
+\newcommand*{\stcomp}[1]{\overline{#1}}
+\newcommand{\grad}[1]{\enm{\nabla\!{#1}}}
+\makeatletter
+\newcommand{\shorteq}{%
+    \settowidth{\@tempdima}{a}% Width of hyphen
+      \resizebox{\@tempdima}{\height}{=}%
+      }
+\makeatother
+
+% General Stats ---------------------------
+\newcommand{\mean}[2]{\ifthenelse{\isempty{#1}}{\enm{\mathbb{E}\!\left({#2}\right)}}{\enm{\mathbb{E}_{#1}\!\left({#2}\right)}}}
+%\newcommand{\var}[1]{\enm{\textrm{Var}(#1)}}
+\newcommand{\var}[2]{\ifthenelse{\isempty{#1}}{\enm{\textrm{Var}\!\left(#2\right)}}{\enm{\textrm{Var}_{#1}\!\left(#2\right)}}}
+\newcommand{\cov}[2]{\enm{\textrm{Cov}\!\left(#1,#2\right)}}
+\newcommand{\obs}{\text{(obs)}} % observed
+\newcommand{\inst}[2]{{#2}^{({#1})}}  % #1-th instance of #2
+\newcommand{\prob}{\enm{\mathbb{P}}}
+
+% Frequently used names
+\newcommand{\figtxt}{Fig.}
+\newcommand{\figstxt}{Figs.}
+\newcommand{\figdtxt}[1]{\ifthenelse{\isempty{#1}}{Figure}{Figure#1}}
+\newcommand{\eqtxt}{Eq.}
+\newcommand{\eqstxt}{Eqs.}
+\newcommand*{\idea}{{\color{red}Possible continuation(s)}:\xspace}
+\newcommand*{\question}{{\color{red}Question(s)}:\xspace}
+\newcommand*{\todo}{{\color{red}TODO}:\xspace}
+
+% other specific
