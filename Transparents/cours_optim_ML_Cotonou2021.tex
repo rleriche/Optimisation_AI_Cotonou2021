@@ -92,6 +92,7 @@ Cotonou, Bénin}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Bibliographie du cours}
+{\small
 Ce cours doit beaucoup à
 \begin{itemize}
 \item \cite{minoux2008programmation} : un classique sur l'optimisation, écrit avant l'avènement du machine learning mais une vraie base (niveau bac+3)
@@ -101,6 +102,7 @@ Ce cours doit beaucoup à
 \item \cite{sun2019optimization} : panorama des méthodes d'optimisation pour les réseaux de neurones, rétro-propagation de gradient (article de recherche)
 \end{itemize}
 Nous en simplifierons le contenu et emprunterons des illustrations.
+} % end small font
 \end{frame}
 
 \subsection{Formulation d'un problème d'optimisation}
@@ -129,12 +131,32 @@ L'optimisation est une\footnote{non unique, contestable par rapport à l'humain 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Exemple d'optimisation: identification d'un modèle}
+\frametitle{Optimization example: design}
 \begin{center}
-\includegraphics[width=0.7\textwidth]{piton_fournaise.jpg}
+\includegraphics[width=0.5\textwidth]{aircraft_distributed_prop.png}\\
+\vspace{-1cm}
+{\hfill\tiny (from \cite{sgueglia2018exploration})}
 \end{center}
+\vskip\baselineskip
+$x$ = aircraft parameters (here distributed electrical propulsion)\\
+$f()$ = $-1\times$ performance metric (agregation of $-1\times$ range, cost, take-off length, \ldots) \\
+At the minimum, the design is ``optimal''.
 \end{frame}
-{\small extrait de \cite{fukushima2010evolution}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Optimization example: model identification}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{piton_fournaise.jpg}\\
+\vspace{-1cm}
+{\hfill\tiny (from \cite{fukushima2010evolution})}
+\end{center}
+$x$ = dike position, geometry, internal pressure\\
+$f()$ = distance between measures (from RADARSAT-1 satellite) and model (boundary elements, non trivial computation)\\
+At the minimum, the model best matches measurements and should correspond to the underground phenomenon.
+\end{frame}
+
+
 \subsection{Exemple en machine learning}
 
 \section{Descente de gradient}
