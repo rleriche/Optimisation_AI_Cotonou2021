@@ -52,12 +52,12 @@
 \author
 [Le Riche et al.]
 {\large Rodolphe Le Riche$^1$, Dédji Brian Whannou$^2$, Espéran Padonou$^3$} 
-\institute[CNRS/Vallet]{
+\institute[CNRS/fondat. Vallet]{
 $^1$ CNRS LIMOS at Mines Saint-Etienne, France \\
 $^2$ KPMG France \\
 $^3$ Fondation Vallet
 } 
-\date[Sept. 2019]{September 2019 \\
+\date[Juillet 2021]{Juillet 2021 \\
 Ecole d'Eté en Intelligence Artificielle \\
 fondation Vallet\\
 Cotonou, Bénin} 
@@ -66,7 +66,7 @@ Cotonou, Bénin}
 \end{frame}
 
 \section{Introduction}
-\subsection{Contexte, motivations}
+\subsection{Objectifs, remerciements}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
@@ -94,14 +94,47 @@ Cotonou, Bénin}
 \frametitle{Bibliographie du cours}
 Ce cours doit beaucoup à
 \begin{itemize}
+\item \cite{minoux2008programmation} : un classique sur l'optimisation, écrit avant l'avènement du machine learning mais une vraie base (niveau bac+3)
 \item \cite{ravikumar17} : présentation détaillée des algorithmes d'optimisation utiles en machine learning (niveau bac+3)
 \item \cite{bishop2006pattern} : un excellent livre d'introduction au machine learning avec quelques commentaires sur l'optimisation (niveau bac+3)
 \item \cite{schmidt2007fast} : techniques pour la régularisation L1 (article de recherche)
 \item \cite{sun2019optimization} : panorama des méthodes d'optimisation pour les réseaux de neurones, rétro-propagation de gradient (article de recherche)
 \end{itemize}
+Nous en simplifierons le contenu et emprunterons des illustrations.
 \end{frame}
 
 \subsection{Formulation d'un problème d'optimisation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Optimisation = formalisation de la décision}
+L'optimisation est une\footnote{non unique, contestable par rapport à l'humain et la vie} formalisation mathématique de la décision
+\vskip\baselineskip
+\mbox{
+\begin{minipage}[c]{0.3\textwidth}
+\includegraphics[width=\textwidth]{decision-clipart.jpg}
+\end{minipage}
+\begin{minipage}[c]{0.7\textwidth}
+\begin{equation*}
+\min_{x \in \mathcal S} f(x)
+\end{equation*}
+\begin{itemize}
+\item $x$ vecteur des paramètres de la décision~: dimensions, somme investie, réglage d'une machine/code, \ldots
+\item $f(x)$~: coût de la décision $x$
+\item $\mathcal S$~: ensemble des valeurs possibles de $x$, espace de recherche
+\end{itemize}
+\end{minipage}
+} % end mbox
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Exemple d'optimisation: identification d'un modèle}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{piton_fournaise.jpg}
+\end{center}
+\end{frame}
+{\small extrait de \cite{fukushima2010evolution}}
 \subsection{Exemple en machine learning}
 
 \section{Descente de gradient}
@@ -155,8 +188,8 @@ Ce cours doit beaucoup à
 \scriptsize
 %\vspace{-1.cm}
 %\setbeamertemplate{bibliography item}{[\theenumiv]} % to have numbers in biblio with beamer
-   \bibliographystyle{plain}
-%   \bibliographystyle{apalike}
+%   \bibliographystyle{plain}
+   \bibliographystyle{apalike}
    \bibliography{biblio}
 \end{frame}
 
