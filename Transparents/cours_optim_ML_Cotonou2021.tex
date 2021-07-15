@@ -84,7 +84,7 @@ Cotonou, Bénin}
 \item Donner des bases pour l'optimisation numérique
 \item en faisant le lien avec le machine learning
 \item pour un public de bac+1
-\item avec quelques exemples de programmes en R/python.
+\item avec quelques exemples de programmes en R/python codés à partir de 0.
 \item Limites: les algorithmes ne seront pas exactement ceux utilisés en pratique pour le deep learning, mais les principaux concepts y seront.
 \end{itemize}
 \end{frame}
@@ -157,7 +157,47 @@ At the minimum, the model best matches measurements and should correspond to the
 \end{frame}
 
 
-\subsection{Exemple en machine learning}
+\subsection{Example in machine learning}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Optimization example: neural net classification}
+\vspace{-0.3cm}
+Predict if a person stays at home or goes out based on longitude, latitude and temperature = a 2 classes classification problem.
+\begin{center}
+\includegraphics[width=0.6\textwidth]{neuralnet3-4-1-classif-crop.pdf}\\
+\vspace{-0.5cm}
+\end{center}
+$x$ = neural network (NN) weights and biases\\
+$f()$ = an error of the NN predictions (cross-entropy error):
+\begin{itemize}
+\item $e$ entries: $e_1$ longitude, $e_2$ latitude, $e_3$ temperature
+\item $t=1$ if person stays, $t=0$ otherwise
+\item Observed data set: $(e^i,t^i),~ i=1,\ldots,N$
+\item $y(e;x)$: output of the NN, the probability that $t(e)=1$ 
+\item $f(x) = - \sum_{i=1}^N \{ t^i \log(y(e^i;x)) + (1-t^i) \log(1 - y(e^i;x))\}$
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Optimization example: neural net regression}
+\vspace{-0.3cm}
+learn a function from a discrete limited set of observations
+\begin{center}
+\includegraphics[width=0.6\textwidth]{neuralnet3-4-1-regress-crop.pdf}\\
+\vspace{-0.5cm}
+\end{center}
+$x$ = neural network (NN) weights and biases\\
+$f()$ = an error of the NN predictions (sum-of-squares error):
+\begin{itemize}
+\item $e$ entries, $t(e)$ target function to learn
+\item Observed data set: $(e^i,t^i),~ i=1,\ldots,N$
+\item $y(e;x)$: output of the NN, the expected value of $t(e)$ 
+\item $f(x) = 1/2 \sum_{i=1}^N (t^i - y(e^i;x))^2 $
+\end{itemize}
+\end{frame}
+
 
 \section{Descente de gradient}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
