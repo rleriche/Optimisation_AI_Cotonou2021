@@ -184,15 +184,39 @@ $f()$ = an error of the NN predictions (cross-entropy error):
 \frametitle{Optimization example: neural net regression}
 \vspace{-0.3cm}
 learn a function from a discrete limited set of observations
+%\begin{center}
+%\includegraphics[width=0.6\textwidth]{neuralnet3-4-1-regress-crop.pdf}\\
+%\vspace{-0.5cm}
+%\end{center}
 \begin{center}
-\includegraphics[width=0.6\textwidth]{neuralnet3-4-1-regress-crop.pdf}\\
-\vspace{-0.5cm}
+\begin{minipage}{0.6\textwidth}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0, outer sep=0] (contour) at (0,0) {\includegraphics[width=\textwidth]{neuralnet3-4-1-regress-crop.pdf}};
+\begin{scope}[x={(contour.south east)},y={(contour.north west)}]
+%\draw[help lines,xstep=0.1,ystep=0.1] (0,0) grid (1,1);
+\node[] (e1) at (0.6,0.2) {\small $e_1$};
+\node[] (e2) at (0.9,0.15) {\small $e_2$};
+\node[] (t) at (0.6,0.85) {\small $t(e)$};
+\node[] (e1NN) at (-0.05,0.75) {\small $e_1$};
+\node[] (e2NN) at (-0.05,0.60) {\small $e_2$};
+\node[] (yy) at (0.48,0.69) {\small $y(e \mathchar\numexpr"6000+`;\relax x)$};
+\draw[black,fill=black] (0.6,0.63) circle (.15ex);
+\draw[black,fill=black] (0.9,0.35) circle (.15ex);
+\draw[black,fill=black] (0.665,0.78) circle (.15ex);
+\draw[black,fill=black] (0.78,0.7) circle (.15ex);
+\draw[black,fill=black] (0.7,0.5) circle (.15ex);
+\draw[black,fill=black] (0.85,0.55) circle (.15ex);
+\draw[black,fill=black] (0.75,0.35) circle (.15ex);
+\end{scope}
+\end{tikzpicture}
+\end{minipage}
 \end{center}
+\vspace{-0.5cm}
 $x$ = neural network (NN) weights and biases\\
 $f()$ = an error of the NN predictions (sum-of-squares error):
 \begin{itemize}
 \item $e$ entries, $t(e)$ target function to learn
-\item Observed data set: $(e^i,t^i),~ i=1,\ldots,N$
+\item observed data set, ``\tikz\draw[black,fill=black] (0,0) circle (.15ex);'' : $(e^i,t^i),~ i=1,\ldots,N$
 \item $y(e;x)$: output of the NN, the expected value of $t(e)$ 
 \item $f(x) = 1/2 \sum_{i=1}^N (t^i - y(e^i;x))^2 $
 \end{itemize}
