@@ -269,7 +269,79 @@ $f()$ = an error of the NN predictions (sum-of-squares error):
 \end{frame}
 
 
+\subsection{Optimization basics}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Local versus global optimum} 
+\begin{equation*}
+\min_{x \in \mathcal S \subset \Rset[d]} f(x)
+\end{equation*}
+\vspace{-0.4cm}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{michalewicz_function_annotated-crop.pdf} \\
+\end{center}
+\vspace{-1.cm}
+R code to generate the plot given in the project folder
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Gradient of a function} 
+Gradient of a function = direction of steepest ascent = vector of partial derivatives
+\begin{equation*}
+\nabla f(x) = \begin{pmatrix} \frac{\partial f}{\partial x_1}(x) \\ \ldots \\ \frac{\partial f}{\partial x_d}(x) \end{pmatrix}
+\end{equation*}
+\begin{center}
+\begin{minipage}[t]{0.7\textwidth}
+\includegraphics[width=\textwidth]{gradient-crop.pdf} \\
+\end{minipage}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Necessary optimality condition (1)} 
+A necessary condition for a differentiable function to have a minimum at $x^\star$ is that it is flat at this point, i.e., its gradient is null
+\begin{equation*}
+x^\star \in \arg \min_{x \in \mathcal S} f(x) \Rightarrow \nabla f(x^\star) = 0
+\end{equation*}
+\vskip\baselineskip
+\begin{center}
+\includegraphics[width=1.2\textwidth]{minimum-crop.pdf} \\
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Necessary optimality condition (2)} 
+\begin{center}
+\includegraphics[width=0.7\textwidth]{quad_neg_curv.png} \\
+necessary is not sufficient (works with a max) 
+\vspace{2cm}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Necessary optimality condition (3)} 
+\begin{center}
+\includegraphics[width=0.7\textwidth]{flat_valley.png} \\
+$\nabla f(x^\star) = 0$ does not make $x^\star$ unique (flat valley)
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Necessary optimality condition (4)} 
+\begin{center}
+\includegraphics[width=0.7\textwidth]{L1norm.png} \\
+$\nabla f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i \rvert$
+\end{center}
+\end{frame}
+
 \section{Descente de gradient}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
 \frametitle{Plan du cours} 
