@@ -157,7 +157,7 @@ At the minimum, the model best matches measurements and should correspond to the
 \end{frame}
 
 
-\subsection{Example in machine learning}
+\subsection{Examples of optimization usages}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
@@ -184,9 +184,9 @@ $f()$ = an error of the NN predictions (a cross-entropy error):
 \frametitle{\small (a word on the classification cross-entropy error)}
 \begin{itemize}
 \item View the relationship between the entry $e$ and the class $t$ as probabilistic (generalizes deterministic functions): $t(e)$ is a Bernoulli variable with a given probability that $t(e)=1$
-\item The NN models this probability: $y(e;x)$ is the probability that $t(e)=1$, $1-y(e;x)$ is the proba that $t(e)=0$
+\item The NN models this probability: $y(e;x)$ is the probability that $t(e)=1$, $1-y(e;x)$ is the proba that $t(e)=0$, $0\le y(e;x) \le 1$.
 \item The probability of $t$ knowing $e$ can be written $y(e;x)^{t}+(1-y(e;x))^{1-t}$
-\item The likelihood of the $N$ i.i.d observations is $\prod_{i=1}^N y(e^i;x)^{t^i}+(1-y(e^i;x))^{1-t^i}$, to be maximized
+\item The likelihood of the $N$ i.i.d observations is $\prod_{i=1}^N \left[y(e^i;x)^{t^i}+(1-y(e^i;x))^{1-t^i}\right]$, to be maximized
 \item The likelihood is turned into an error, to be minimized, by taking $-\log(\text{likelihood})$, 
 \begin{equation*}
 f(x) = - \sum_{i=1}^N \{ t^i \log(y(e^i;x)) + (1-t^i) \log(1 - y(e^i;x))\}
@@ -235,6 +235,37 @@ $f()$ = an error of the NN predictions (sum-of-squares error):
 \item $y(e;x)$: output of the NN, the expected value of $t(e)$ 
 \item $f(x) = 1/2 \sum_{i=1}^N (t^i - y(e^i;x))^2 $
 \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Optimization example: image denoising}
+\vspace{-0.5cm}
+\begin{equation*}
+\begin{split}
+\min_x f(x) \quad,\quad & f(x) = \frac{1}{2}\sum_{i=1}^{N_{\text{pixels}}} (y_i - x_i)^2 + 
+\lambda \sum_{i=1}^{N_{\text{pixels}}} \sum_{j \text{ near } i} \lvert x_i - x_j \rvert \\
+& \lambda \ge 0 \quad\text{regularization constant}
+\end{split}
+\end{equation*}
+\begin{center}
+\begin{minipage}[t]{0.2\textwidth}
+\includegraphics[width=\textwidth]{c_clean.png} \\
+{\small target image}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.2\textwidth}
+\includegraphics[width=\textwidth]{c_noisy.png} \\
+{\small \mbox{noisy (observed)} $= y_i$'s}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.2\textwidth}
+\includegraphics[width=\textwidth]{c_denoised.png} \\
+{\small \mbox{denoised (optimized)} $=x^\star$}
+\end{minipage}
+\mbox{\quad}
+\end{center}
+{\scriptsize (from \cite{ravikumar17}) \hfill}
 \end{frame}
 
 
