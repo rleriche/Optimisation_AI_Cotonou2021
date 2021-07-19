@@ -1,15 +1,17 @@
 # set of utilities for simple optimization program
 
-# forward finite difference
-ffinite.diff <- function(x,f,h=1.e-8){
+# calculate f and gradient of f by forward finite difference
+f.gradf <- function(x,f,h=1.e-8){
   d<-length(x)
-  df <- rep(NA,d)
+  res <- list()
+  res$gradf <- rep(NA,d)
+  res$fofx <- f(x)
   for (i in 1:d){
     xp <- x
     xp[i] <- x[i]+h
-    df[i] <- (f(xp)-f(x))/h
+    res$gradf[i] <- (f(xp)-res$fofx)/h
   }
-  return(df)
+  return(res)
 }
 
 # project on bounds
