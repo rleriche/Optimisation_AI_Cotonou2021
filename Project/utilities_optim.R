@@ -14,4 +14,19 @@ f.gradf <- function(x,f,h=1.e-8){
   return(res)
 }
 
-# project on bounds
+# record points online
+updateRec <- function(rec,x,f,t){
+  rec$X <- rbind(rec$X,x)
+  rec$F <- c(rec$F,f)
+  rec$Time <- c(rec$Time,t)
+  return(rec)
+}
+
+# remove last line of rec to avoid duplicates
+shave1Rec <- function(rec){
+  l<-length(rec$F)
+  rec$X<-rec$X[1:l-1,]
+  rec$F<-rec$F[1:l-1]
+  rec$Time<-rec$Time[1:l-1]
+  return(rec)
+}

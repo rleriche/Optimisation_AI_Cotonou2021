@@ -6,7 +6,7 @@
 # Rodolphe Le Riche
 #
 # Implementation notes: 
-# * no attempt at making this code efficient, it is for teaching purpose. 
+# * no attempt at making this code efficient, it is for teaching purpose.
 #############################################
 source('test_functions.R')
 source('utilities_optim.R')
@@ -19,7 +19,7 @@ UB<-c(5,5) #upper bounds
 fun<-quadratic #function to minimize
 
 ### algorithm settings
-xinit <- c(-4,4.9) # initial point
+xinit <- c(-1,4.9) # initial point
 algo_type <- "descent" # choices are : "gradient" or "descent"
 #   Both algorithms have minus the normalized gradient as search direction
 #       x_{t+1} <- x_t + stepSize*direction
@@ -30,11 +30,11 @@ stepFactor <- 0.2 # step factor for "gradient" version
 sufficientDecreaseFactor <- 0.1 # controls stepSize for "descent" version
 #
 printlevel <- 2 # controls how much is stored and printed
-#                 =1 store best
-#                 =2 store all points
-stopBudget <- 10 # maximum number of iterations:
+#                 =1 store best and minimal output
+#                 =2 store all points and more outputs
+stopBudget <- 30 # maximum number of function evaluations:
 #   the maximum number of calls to the function is larger because of the 
-#   finite differences scheme: nb_calls_to_fun = (d+1)*iter
+#   finite differences scheme: nbFun = (d+1)*iter+nbFunLS
 stopGradNorm <- 1.e-6 # stop when gradient norm / sqrt(d) is smaller than 
 
 ### initializations
@@ -43,16 +43,21 @@ eval <- f.gradf(x=x,f=fun,h=1.e-8) #eval$fofx is the function
                           # eval$gradf the associated gradient
 normGrad <- sqrt(sum(eval$gradf^2))
 iter <- 1
-# ...best are recordings of best so far
+nbFun <- 1
+nbFunLS <- 0 # calls to fun done during the line search
+# recordings of best so far
 Fbest <- eval$fofx
-recXbest <- matrix(x,nrow=1)
-recFbest <- Fbest
-recTime <- c(iter)
+recBest <- list()
+recBest$X <- matrix(x,nrow=1)
+recBest$F <- Fbest
+recBest$Time <- c(nbFun)
 # below are recordings of the whole history. Memory consuming. 
 # If memory issues, set printlevel<2
 if (printlevel >= 2){
-  recX <- matrix(x,nrow=1)
-  recF <- eval$fofx
+  rec <- list()
+  rec$X <- matrix(x,nrow=1)
+  rec$F <- eval$fofx
+  rec$Time <- nbFun
 }
 
 ### line search function
@@ -60,31 +65,47 @@ if (printlevel >= 2){
 # s must satisfy : f(x+s*d) <= f(x) + stepSize* (suffDecFact * d^T*gradf)
 #   suffDecFact in [0,1[  used in the sufficient decrease test 
 #   decFact in ]0,1[   used to reduce stepSize
+#   data for recording is copied from global environnement: rec, printlevel, nbFun
+#   UB,LB also come from global environment (a bit ugly)
 BacktrackLineSearch <- function(x,fofx,gradf,direction,f,suffDecFact=0.1,decFact=0.5,initStepFact=1){
+  res <- list()
   normGrad <- sqrt(sum(gradf^2))
   stepSize <- initStepFact*normGrad
   decConst <- suffDecFact*(direction%*%gradf)
-  maxloop <- 100 # safety
+  maxloop <- 100 # max line search budget
   #
-  xp <- x+stepSize*direction
+  xpp <- x+stepSize*direction
+  # project on bounds
+  xp <- ifelse(xpp < LB, LB, ifelse(xpp > UB, UB, xpp))
   fp <- f(xp)
   nloop <- 1
+  if (printlevel>=2) {
+    lrec <- rec
+    lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)
+  }
   while ( (fp > fofx+stepSize*decConst) & (nloop<maxloop)) {
     stepSize <- stepSize*decFact
-    xp <- x+stepSize*direction
+    xpp <- x+stepSize*direction
+    # project on bounds
+    xp <- ifelse(xpp < LB, LB, ifelse(xpp > UB, UB, xpp))
     fp <- f(xp)
     nloop <- nloop+1
+    if (printlevel>=2) {lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)}
   }
   if (nloop >= maxloop){ 
     msg <- paste("nloop=",nloop," larger than maxloop=",maxloop)
     warning(msg)
   }
-  return(stepSize)
-}
+  res$stepSize<-stepSize
+  res$nFcalls <- nloop
+  if (printlevel>=2) {res$rec <- lrec}
+  return(res)
+} ### end BacktrackLineSearch function
+
 
 ### run the algo
-if (printlevel >=2) {cat("Start gradient search\n")}
-while ((iter <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
+if (printlevel >=1) {cat("Start gradient search\n")}
+while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
   
   direction <- -eval$gradf/normGrad # search direction
   # no line search, step size proportional to gradient norm
@@ -92,7 +113,16 @@ while ((iter <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
   stepSize <- stepFactor*normGrad
   } 
   else if (algo_type=="descent"){
-    stepSize <- BacktrackLineSearch(x,eval$fofx,eval$gradf,direction,f=fun)
+    lsres <- BacktrackLineSearch(x,eval$fofx,eval$gradf,direction,f=fun,suffDecFact=0.5)
+    stepSize <- lsres$stepSize
+    nbFun <- nbFun+lsres$nFcalls-1 # -1 for copy of last point, see below
+    nbFunLS <- nbFunLS + lsres$nFcalls-1 
+    if (printlevel>=2) {
+      rec<-lsres$rec
+      # delete last point because it will be recalculated 
+      # (cheating to save code but the rec is correct then)
+      rec<- shave1Rec(rec=rec)
+    }
   }
   else {
     stop("unknown algo_type")
@@ -104,28 +134,28 @@ while ((iter <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
   eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
   normGrad <- sqrt(sum(eval$gradf^2))
   iter <- iter+1
+  nbFun <- nbFun+1
   # make the step
   x <- xnew
   # bookkeeping
   if (eval$fofx < Fbest) {
     Fbest <- eval$fofx
-    recXbest <- rbind(recXbest,xnew) 
-    recFbest <- c(recFbest,Fbest)
-    recTime <- c(recTime,iter)
+    recBest <- updateRec(rec=recBest,x=xnew,f=Fbest,t=nbFun)
   }
-  if (printlevel >= 2){
-    recX <- rbind(recX,xnew)
-    recF <- c(recF,eval$fofx)
+  if (printlevel >= 1){
+    if (printlevel >=2 ) {rec <- updateRec(rec=rec,x=xnew,f=eval$fofx,t=nbFun)}
     cat(" iteration : ",iter,"\r")
   } 
 
 } # end while of main loop 
-if (printlevel >= 2){cat("gradient search exited after ",iter," iterations, start plotting\n")}
+if (printlevel >= 1){
+  cat("gradient search exited after ",iter," iterations, ",nbFun," fct evaluations\n")
+}
 
 ### Vizualization
-plot(x = recTime,y=recFbest,type = "l",xlab = "nb. evaluations",ylab="f",col="red")
+plot(x = recBest$Time,y=recBest$F,type = "l",xlab = "nb. iterations",ylab="f",col="red")
 if (printlevel >= 2){
-  lines(x = seq(1,iter),y = recF,col="blue")
+  lines(x = rec$Time,y = rec$F,col="blue")
 }
 if (d==2) { 
   # the code below is mainly a duplicate of what is in 3Dplots ... 
@@ -139,9 +169,9 @@ if (d==2) {
   contour(x1, x2, z.grid, nlevels=20, xlab="x1", ylab="x2")
   # with search points on top
   if (printlevel >=2){
-    points(recX[,1], recX[,2], pch=20, col="blue")
-    text(recX, labels=1:iter, pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
-    points(recX[1,1], recX[1,2], pch=19, col="red") # initial point drawn in red
+    points(rec$X[,1], rec$X[,2], pch=20, col="blue")
+    text(rec$X, labels=1:iter, pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
+    points(rec$X[1,1], rec$X[1,2], pch=19, col="red") # initial point drawn in red
   }
   # dev.off()
 }
