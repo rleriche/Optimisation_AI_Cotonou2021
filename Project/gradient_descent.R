@@ -20,7 +20,7 @@ fun<-quadratic #function to minimize
 
 ### algorithm settings
 xinit <- c(-4,4.9) # initial point
-algo_type <- "gradient" # choices are : "gradient" or "descent"
+algo_type <- "descent" # choices are : "gradient" or "descent"
 #   Both algorithms have minus the normalized gradient as search direction
 #       x_{t+1} <- x_t + stepSize*direction
 #   for "gradient" :  stepSize = stepFactor*normGrad
@@ -57,9 +57,12 @@ if (printlevel >= 2){
 
 ### line search function
 # backtracking with Armijo (sufficient decrease) condition
-# s must satisfy : f(x+s*d) <= f(x) + sufficientDecrease * s * d^T*gradf
-BacktrackLineSearch <- function(x,fofx,gradf,direction,f,suffDecFact=0.1,decFact=0.5,initStepSize=1){
-  stepSize <- initStepSize
+# s must satisfy : f(x+s*d) <= f(x) + stepSize* (suffDecFact * d^T*gradf)
+#   suffDecFact in [0,1[  used in the sufficient decrease test 
+#   decFact in ]0,1[   used to reduce stepSize
+BacktrackLineSearch <- function(x,fofx,gradf,direction,f,suffDecFact=0.1,decFact=0.5,initStepFact=1){
+  normGrad <- sqrt(sum(gradf^2))
+  stepSize <- initStepFact*normGrad
   decConst <- suffDecFact*(direction%*%gradf)
   maxloop <- 100 # safety
   #
@@ -89,7 +92,7 @@ while ((iter <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
   stepSize <- stepFactor*normGrad
   } 
   else if (algo_type=="descent"){
-    stop("not implemented yet")
+    stepSize <- BacktrackLineSearch(x,eval$fofx,eval$gradf,direction,f=fun)
   }
   else {
     stop("unknown algo_type")
