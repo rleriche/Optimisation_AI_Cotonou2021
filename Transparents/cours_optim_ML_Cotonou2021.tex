@@ -272,6 +272,14 @@ $f()$ = an error of the NN predictions (sum-of-squares error):
 \subsection{Optimization basics}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}%[allowframebreaks]
+\frametitle{Optimization basics} 
+%\begin{multicols}{2}
+\tableofcontents[currentsection]
+%\end{multicols}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Local versus global optimum} 
 \begin{equation*}
@@ -297,6 +305,30 @@ Gradient of a function = direction of steepest ascent = vector of partial deriva
 \includegraphics[width=\textwidth]{gradient-crop.pdf} \\
 \end{minipage}
 \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Numerical approximation of the gradient} 
+\mbox{
+\begin{minipage}[b]{0.6\textwidth}
+By forward finite differences 
+\begin{equation*}
+\frac{\partial f}{\partial x_i}f(x) \approx \frac{f(x+h e^i)-f(x)}{h}
+\end{equation*}
+{Proof: \scriptsize
+ by Taylor,\\
+$f(x+he^i) = f(x) + h {e^i}^\top \nabla f(x) + h^2/2 {e^i}^\top \nabla^2 f(x+\rho h e^i) e^i~,~\rho\in ]0,1[$ \\
+$\nabla f(x) = \frac{f(x+he^i)-f(x)}{h} - h/2 {e^i}^\top \nabla^2 f(x+\rho h e^i) e^i $ \\
+and make $h$ very small $\square$
+}
+\end{minipage}
+\begin{minipage}[b]{0.4\textwidth}
+\includegraphics[width=\textwidth]{finitediff-crop.pdf}
+\end{minipage}
+} % mbox
+\vskip\baselineskip
+Other (better but more difficult to implement) schemes: central differences, automatic differentiation (e.g., in TensorFlow or PyTorch), (semi-)analytic differentiation (e.g., backpropagation in NN).
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
