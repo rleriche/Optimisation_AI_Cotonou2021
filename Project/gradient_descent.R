@@ -57,7 +57,27 @@ if (printlevel >= 2){
 
 ### line search function
 # backtracking with Armijo (sufficient decrease) condition
-# f(x+s*d) <= f(x) + c
+# s must satisfy : f(x+s*d) <= f(x) + sufficientDecrease * s * d^T*gradf
+BacktrackLineSearch <- function(x,fofx,gradf,direction,f,suffDecFact=0.1,decFact=0.5,initStepSize=1){
+  stepSize <- initStepSize
+  decConst <- suffDecFact*(direction%*%gradf)
+  maxloop <- 100 # safety
+  #
+  xp <- x+stepSize*direction
+  fp <- f(xp)
+  nloop <- 1
+  while ( (fp > fofx+stepSize*decConst) & (nloop<maxloop)) {
+    stepSize <- stepSize*decFact
+    xp <- x+stepSize*direction
+    fp <- f(xp)
+    nloop <- nloop+1
+  }
+  if (nloop >= maxloop){ 
+    msg <- paste("nloop=",nloop," larger than maxloop=",maxloop)
+    warning(msg)
+  }
+  return(stepSize)
+}
 
 ### run the algo
 if (printlevel >=2) {cat("Start gradient search\n")}
