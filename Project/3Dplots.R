@@ -22,6 +22,11 @@ x.grid <- expand.grid(x1, x2)
 z <- apply(x.grid, 1, fun)
 z.grid <- matrix(z, no.grid)
 
+### 2D contour plot
+# png(filename="./contour.png") # save the contour in the current directory
+contour(x1, x2, z.grid, nlevels=20, xlab="x1", ylab="x2")
+# dev.off()
+
 #### 3D rgl plot
 open3d()
 surface3d(x1, x2, z.grid, col= "lightblue")
@@ -31,8 +36,5 @@ aspect3d(1, 1, 1)
 rgl.snapshot("./fileofplot.png", fmt="png", top=T)
 # 
 
-### 2D contour plot
-# png(filename="./contour.png") # save the contour in the current directory
- contour(x1, x2, z.grid, nlevels=20, xlab="x1", ylab="x2")
-# dev.off()
+
 
