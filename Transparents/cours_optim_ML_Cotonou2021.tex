@@ -333,6 +333,13 @@ Other (better but more difficult to implement) schemes: central differences, aut
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
+\frametitle{Descent direction} 
+\textcolor{red}{(work in progress)}
+Taylor to prove what is a descent direction (a direction which makes an angle smaller than 90 deg with minus the gradient)
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
 \frametitle{Necessary optimality condition (1)} 
 A necessary condition for a differentiable function to have a minimum at $x^\star$ is that it is flat at this point, i.e., its gradient is null
 \begin{equation*}
@@ -372,25 +379,42 @@ $\nabla f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i
 \end{center}
 \end{frame}
 
-\section{Descente de gradient}
+\section{Steepest descent}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
 \frametitle{Plan du cours} 
 %\begin{multicols}{2}
-\begin{center} \textbf{Introduction à l'optimisation pour le machine learning} \end{center}
+\begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
 \tableofcontents[currentsection]
 %\end{multicols}
 \end{frame}
-\subsection{Algorithme}
-\subsection{Application aux réseaux de neurones: la rétropropagation de gradient}
 
-\section{Accélarations du gradient}
+\subsection{Algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Steepest descent algorithm} 
+\textcolor{red}{(work in progress)}
+present algo\\
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Comments on steepest descent} 
+\textcolor{red}{(work in progress)}
+show that (with perfect line search) consecutive search directions are perpendicular: tendency to oscillate, sensitive to bad conditionning\\
+other flaws: no convergence on nondifferentiable functions, gets trapped in local minima
+\end{frame}
+
+\subsection{Application neural network}
+
+\section{Improved gradient searches}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
 \frametitle{Plan du cours} 
 %\begin{multicols}{2}
-\begin{center} \textbf{Introduction à l'optimisation pour le machine learning} \end{center}
+\begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
 \tableofcontents[currentsection]
 %\end{multicols}
 \end{frame}
