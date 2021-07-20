@@ -9,13 +9,13 @@ source("./test_functions.R")
 # function dimension
 dim <- 2
 # choose a function from test_functions.R file
-fun <- quadratic
+fun <- rosen
 # upper and lower bounds
-LB<-c(-5,5) 
+LB<-c(-5,-5) 
 UB<-c(5,5)
 
 # start drawing the function (necessarily dim=2)
-no.grid <- 300
+no.grid <- 100
 x1 <- seq(LB[1], UB[1], length.out=no.grid)
 x2 <- seq(LB[2], UB[2], length.out=no.grid)
 x.grid <- expand.grid(x1, x2)

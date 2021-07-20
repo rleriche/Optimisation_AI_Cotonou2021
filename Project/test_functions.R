@@ -61,7 +61,7 @@ michalewicz <- function(xx, m=10){
 ##### quadratic function #########"
 quadratic <- function(xx){
   glob_xstar <- rep(0,length(xx))
-  cond.no <- 2
+  cond.no <- 5
   aa <- 1.024*xx
   d <- length(aa)
   xstar <- glob_xstar
@@ -117,5 +117,24 @@ quad_wave <- function(xx){
 ##### function with hierarchical sensitivities and local optima #########
 L1norm <- function(xx){
      y <- sum(abs(xx))
+  return(y)
+}
+
+rosen <- function(xx)
+{
+  ##########################################################################
+  #
+  # ROSENBROCK FUNCTION
+  # global optimum at (1,...,1)
+  # copied and slightly changed from
+  # Authors: Sonja Surjanovic, Simon Fraser University
+  #          Derek Bingham, Simon Fraser University
+  # For function details and reference information, see:
+  # http://www.sfu.ca/~ssurjano/
+  ##########################################################################
+  d <- length(xx)
+  xi <- xx[1:(d-1)]
+  xnext <- xx[2:d]
+  y <- sum(100*(xnext-xi^2)^2 + (xi-1)^2)
   return(y)
 }

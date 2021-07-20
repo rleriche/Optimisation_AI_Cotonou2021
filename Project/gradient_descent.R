@@ -7,19 +7,23 @@
 #
 # Implementation notes: 
 # * no attempt at making this code efficient, it is for teaching purpose.
+# * the "descent" algorithm should be preferred over the "gradient" because
+#   the line search robustifies a lot the search
+# * delete the global variables if you change dimension and optimise quadratic function.
 #############################################
+rm(list=ls()) # clear environment
 source('test_functions.R')
 source('utilities_optim.R')
 
 ### problem definition
 # search space
 d<-2 # dimension
-LB<-c(-5,-5) #lower bounds
-UB<-c(5,5) #upper bounds
-fun<-quadratic #function to minimize
+LB<-rep(-5,d) #lower bounds
+UB<-rep(5,d) #upper bounds
+fun<-rosen #function to minimize
 
 ### algorithm settings
-xinit <- c(-1,4.9) # initial point
+xinit <- c(2.2,3.5) #rep(-4.9,d) # initial point
 algo_type <- "descent" # choices are : "gradient" or "descent"
 #   Both algorithms have minus the normalized gradient as search direction
 #       x_{t+1} <- x_t + stepSize*direction
@@ -32,7 +36,7 @@ sufficientDecreaseFactor <- 0.1 # controls stepSize for "descent" version
 printlevel <- 2 # controls how much is stored and printed
 #                 =1 store best and minimal output
 #                 =2 store all points and more outputs
-stopBudget <- 30 # maximum number of function evaluations:
+stopBudget <- 100 # maximum number of function evaluations:
 #   the maximum number of calls to the function is larger because of the 
 #   finite differences scheme: nbFun = (d+1)*iter+nbFunLS
 stopGradNorm <- 1.e-6 # stop when gradient norm / sqrt(d) is smaller than 
@@ -150,6 +154,9 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
 } # end while of main loop 
 if (printlevel >= 1){
   cat("gradient search exited after ",iter," iterations, ",nbFun," fct evaluations\n")
+  lrecBest <- dim(recBest$X)[1]
+  cat('best x:',recBest$X[lrecBest,],'\n')
+  cat('best f:',recBest$F[lrecBest],'\n')
 }
 
 ### Vizualization
@@ -171,7 +178,7 @@ if (d==2) {
   if (printlevel >=2){
     points(rec$X[,1], rec$X[,2], pch=20, col="blue")
     text(rec$X, labels=1:iter, pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
-    points(rec$X[1,1], rec$X[1,2], pch=19, col="red") # initial point drawn in red
+    points(recBest$X[,1], recBest$X[,2], pch=19, col="red") # bests so far in red (should resemble iterates)
   }
   # dev.off()
 }
