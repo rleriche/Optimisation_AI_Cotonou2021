@@ -1,15 +1,15 @@
 #############################################
-# Two gradient descent algorithms
-# 1) Gradient descent where step size depends on gradient norm : "gradient"
-# 2) Steepest descent where step size depends on a line search : "descent"
-#
+# A family of gradient-based descent algorithms
 # Rodolphe Le Riche
+#
+# They differ in how the search direction is calculated
+#   direction_type = (gradient, momentum, NAG) , where NAG= Nesterov Accelerated Gradient
+# and they differ on whether a single step is taken or a line search performed
+#   linesearch_type = (none, armijo)
 #
 # Implementation notes: 
 # * no attempt at making this code efficient, it is for teaching purpose.
-# * the "descent" algorithm should be preferred over the "gradient" because
-#   the line search robustifies a lot the search
-# * delete the global variables if you change dimension and optimise quadratic function.
+# * delete the global variables if you change dimension and optimize quadratic function.
 #############################################
 rm(list=ls()) # clear environment
 source('test_functions.R')
@@ -21,18 +21,18 @@ source('line_searches.R')
 d<-2 # dimension
 LB<-rep(-5,d) #lower bounds
 UB<-rep(5,d) #upper bounds
-fun<-rosen #function to minimize
+fun<-L1norm #function to minimize
 
 ### algorithm settings
-xinit <- c(4.5,4.5) #rep(-4.9,d) # initial point
-algo_type <- "descent" # choices are : "gradient" or "descent"
-#   Both algorithms have minus the normalized gradient as search direction
+xinit <- c(4.5,3.5) #rep(-4.9,d) # initial point
+direction_type <- "gradient" # choices are : "gradient", "momentum", "NAG"
+linesearch_type <- "none" # choices are: "none", "armijo"
+#   all algorithms have a search direction and a step size
 #       x_{t+1} <- x_t + stepSize*direction
-#   for "gradient" :  stepSize = stepFactor*normGrad
-#   for "descent" : stepSize comes from a linesearch where 
-#   sufficientDecreaseFactor is a control parameter
-stepFactor <- 0.2 # step factor for "gradient" version
-sufficientDecreaseFactor <- 0.1 # controls stepSize for "descent" version
+#   but the direction and the stepSize are calculated in various ways, see below
+#   for gradient&none :  stepSize = stepFactor*normGrad
+#   when linesearch_type is not non : stepSize comes from a linesearch, cf line_searches.R file
+stepFactor <- 0.2 # step factor when there is no line search, use depends on direction
 #
 printlevel <- 2 # controls how much is stored and printed
 #                 =1 store best and minimal output
@@ -70,10 +70,16 @@ if (printlevel >= 2){
 if (printlevel >=1) {cat("Start gradient search\n")}
 while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
   
-  direction <- -eval$gradf/normGrad # search direction
+  if (direction_type=="gradient"){
+    step <- -eval$gradf
+  }
+  else{stop("not implemented yet")}
+  rawStepSize <- l2norm(step)
+  direction <- step/rawStepSize
+  
   # no line search, step size proportional to gradient norm
-  if (algo_type=="gradient"){
-    stepSize <- stepFactor*normGrad
+  if (linesearch_type == "none"){
+    stepSize <- stepFactor*rawStepSize
     xcandidate <- x + stepSize*direction
     # project on bounds if necessary
     xnew <- ifelse(xcandidate < LB, LB, ifelse(xcandidate > UB, UB, xcandidate))
@@ -83,9 +89,8 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
     nbFun <- nbFun+1
     if (printlevel >=2 ) {rec <- updateRec(rec=rec,x=xnew,f=eval$fofx,t=nbFun)}
   } 
-  else if (algo_type=="descent"){
+  else if (linesearch_type=="armijo"){
     lsres <- BacktrackLineSearch(x,eval$fofx,eval$gradf,direction,f=fun)
-    # stepSize <- lsres$stepSize
     xnew <- lsres$xnew
     nbFun <- nbFun+lsres$nFcalls
     nbFunLS <- nbFunLS + lsres$nFcalls

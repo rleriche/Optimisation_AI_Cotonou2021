@@ -14,10 +14,10 @@
 BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
                                 suffDecFact=0.1,decFact=0.5,initStepFact=1){
   res <- list()
-  normGrad <- sqrt(sum(gradf^2))
+  normGrad <- l2norm(gradf)
   # calculate initial stepSize
   # either as initStepFact*norm of gradient (but this may fail in flat regions)
-  # or as a fraction of domain diagonal
+  # or as a fraction of domain diagonal. Take the max of both initial step sizes.
   stepSize <- max(initStepFact*normGrad,(l2norm(UB-LB)/100))
   decConst <- suffDecFact*(direction%*%gradf)
   maxloop <- 100 # max line search budget
