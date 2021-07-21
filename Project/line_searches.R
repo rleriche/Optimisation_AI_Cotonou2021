@@ -15,7 +15,10 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
                                 suffDecFact=0.1,decFact=0.5,initStepFact=1){
   res <- list()
   normGrad <- sqrt(sum(gradf^2))
-  stepSize <- initStepFact*normGrad
+  # calculate initial stepSize
+  # either as initStepFact*norm of gradient (but this may fail in flat regions)
+  # or as a fraction of domain diagonal
+  stepSize <- max(initStepFact*normGrad,(l2norm(UB-LB)/100))
   decConst <- suffDecFact*(direction%*%gradf)
   maxloop <- 100 # max line search budget
   #
@@ -33,9 +36,12 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
     xpp <- x+stepSize*direction
     # project on bounds
     xp <- ifelse(xpp < LB, LB, ifelse(xpp > UB, UB, xpp))
-    fp <- f(xp)
-    nloop <- nloop+1
-    if (printlevel>=2) {lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)}
+    if (l2norm(xpp-xp)<1.e-10){ # only evaluate if point is in bounds,
+      # otherwise decrease stepSize
+      fp <- f(xp)
+      nloop <- nloop+1
+      if (printlevel>=2) {lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)}
+    }
   }
   if (nloop >= maxloop){ 
     msg <- paste("nloop=",nloop," larger than maxloop=",maxloop)

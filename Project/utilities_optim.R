@@ -22,3 +22,7 @@ updateRec <- function(rec,x,f,t){
   return(rec)
 }
 
+# L2 norm
+l2norm <- function(x){
+  return(sqrt(sum(x^2)))
+}

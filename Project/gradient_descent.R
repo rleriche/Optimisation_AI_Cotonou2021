@@ -1,7 +1,7 @@
 #############################################
 # Two gradient descent algorithms
-# 1) Gradient descent where step size depends on gradient norm
-# 2) Steepest descent where step size depends on a line search
+# 1) Gradient descent where step size depends on gradient norm : "gradient"
+# 2) Steepest descent where step size depends on a line search : "descent"
 #
 # Rodolphe Le Riche
 #
@@ -21,11 +21,11 @@ source('line_searches.R')
 d<-2 # dimension
 LB<-rep(-5,d) #lower bounds
 UB<-rep(5,d) #upper bounds
-fun<-L1norm #function to minimize
+fun<-rosen #function to minimize
 
 ### algorithm settings
-xinit <- c(2.2,3.5) #rep(-4.9,d) # initial point
-algo_type <- "gradient" # choices are : "gradient" or "descent"
+xinit <- c(4.5,4.5) #rep(-4.9,d) # initial point
+algo_type <- "descent" # choices are : "gradient" or "descent"
 #   Both algorithms have minus the normalized gradient as search direction
 #       x_{t+1} <- x_t + stepSize*direction
 #   for "gradient" :  stepSize = stepFactor*normGrad
@@ -46,7 +46,7 @@ stopGradNorm <- 1.e-6 # stop when gradient norm / sqrt(d) is smaller than
 x <- xinit
 eval <- f.gradf(x=x,f=fun,h=1.e-8) #eval$fofx is the function 
                           # eval$gradf the associated gradient
-normGrad <- sqrt(sum(eval$gradf^2))
+normGrad <- l2norm(eval$gradf)
 iter <- 1
 nbFun <- 1
 nbFunLS <- 0 # calls to fun done during the line search
@@ -79,7 +79,7 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
     xnew <- ifelse(xcandidate < LB, LB, ifelse(xcandidate > UB, UB, xcandidate))
     # evaluate new point
     eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
-    normGrad <- sqrt(sum(eval$gradf^2))
+    normGrad <- l2norm(eval$gradf)
     nbFun <- nbFun+1
     if (printlevel >=2 ) {rec <- updateRec(rec=rec,x=xnew,f=eval$fofx,t=nbFun)}
   } 
@@ -91,7 +91,7 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
     nbFunLS <- nbFunLS + lsres$nFcalls
     # re-evaluate for the gradient and do not increment nbFun as the point has already been calculated in linesearch
     eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
-    normGrad <- sqrt(sum(eval$gradf^2))
+    normGrad <- l2norm(eval$gradf)
     if (printlevel>=2) {
       rec<-lsres$rec
     }
