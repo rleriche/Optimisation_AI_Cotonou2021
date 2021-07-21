@@ -22,11 +22,3 @@ updateRec <- function(rec,x,f,t){
   return(rec)
 }
 
-# remove last line of rec to avoid duplicates
-shave1Rec <- function(rec){
-  l<-length(rec$F)
-  rec$X<-rec$X[1:l-1,]
-  rec$F<-rec$F[1:l-1]
-  rec$Time<-rec$Time[1:l-1]
-  return(rec)
-}
