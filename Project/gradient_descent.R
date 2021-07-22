@@ -18,14 +18,14 @@ source('line_searches.R')
 
 ### problem definition
 # search space
-d<-2 # dimension
+d<-10 # dimension
 LB<-rep(-5,d) #lower bounds
 UB<-rep(5,d) #upper bounds
-fun<-rosen #function to minimize
+fun<-quadratic #function to minimize
 
 ### algorithm settings
-xinit <- c(4.5,3.5) #rep(-4.9,d) # initial point
-direction_type <- "gradient" # choices are : "gradient", "momentum", "NAG"
+xinit <- rep(-4.9,d)#c(4.5,3.5) rep(-4.9,d) # initial point
+direction_type <- "NAG" # choices are : "gradient", "momentum", "NAG"
 linesearch_type <- "armijo" # choices are: "none", "armijo"
 #   all algorithms have a search direction and a step size
 #       x_{t+1} <- x_t + stepSize*direction
@@ -38,13 +38,14 @@ linesearch_type <- "armijo" # choices are: "none", "armijo"
 #   Without linesearch, stepSize = stepFactor*l2norm(step)
 #   Expl, for gradient&none :  stepSize = stepFactor*normGrad
 #   when linesearch_type is not none : stepSize comes from a linesearch, cf line_searches.R file
-stepFactor <- 0.2 # step factor when there is no line search, use depends on direction
+stepFactor <- 0.1 # step factor when there is no line search, use depends on direction
+#   stepfactor ~ 1/Lipschitz_constant : the steeper the function, the smaller stepfactor
 beta <- 0.9 # momentum term
 #
 printlevel <- 2 # controls how much is stored and printed
 #                 =1 store best and minimal output
 #                 =2 store all points and more outputs
-stopBudget <- 15000 # maximum number of function evaluations:
+stopBudget <- 10000 # maximum number of function evaluations:
 #   the maximum number of calls to the function is larger because of the 
 #   finite differences scheme: nbFun = (d+1)*iter+nbFunLS
 stopGradNorm <- 1.e-6 # stop when gradient norm / sqrt(d) is smaller than 
@@ -74,7 +75,10 @@ if (printlevel >= 2){
 
 
 ### run the algo
-if (printlevel >=1) {cat("Start gradient search\n")}
+if (printlevel >=1) {
+  startmsg <- paste0("Start ",direction_type," (direction) + ",linesearch_type," (line search) descent\n")
+  cat(startmsg)
+  }
 while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
   
   if (direction_type=="gradient"){
@@ -88,7 +92,24 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
         step <- -eval$gradf + beta*previous_step
       }
   }
-  else{stop("not implemented yet")}
+  else if (direction_type=="NAG"){
+    if (iter <= 1){
+      step <- -eval$gradf
+    }
+    else {
+      # evaluate gradient at anticipated next point
+      xnag <- x + beta*(x-xprevious)
+      evalnag <- f.gradf(x=xnag,f=fun,h=1.e-8)
+      # we should account for this evaluation
+      step <- -evalnag$gradf + beta*previous_step
+    }
+  }
+  else{stop("unknown direction_type")}
+  # if the current point is near a boundary, the direction should be projected on that boundary
+  tol <- 1.e-15
+  violation <- ifelse(x>(LB+tol),0,-1) + ifelse(x<(UB-tol),0,1)
+  step[which(violation*step>0)]<-0
+  #
   rawStepSize <- l2norm(step)
   direction <- step/rawStepSize
   
@@ -123,6 +144,7 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
   iter <- iter+1
   previous_step <- step
   # previous_step <- xnew-x
+  xprevious <- x
   x <- xnew
 
   # bookkeeping
@@ -136,14 +158,14 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
 } # end while of main loop
 
 if (printlevel >= 1){
-  cat("gradient search exited after ",iter," iterations, ",nbFun," fct evaluations\n")
+  cat("Search exited after ",iter," iterations, ",nbFun," fct evaluations\n")
   lrecBest <- dim(recBest$X)[1]
   cat('best x:',recBest$X[lrecBest,],'\n')
   cat('best f:',recBest$F[lrecBest],'\n')
 }
 
 ### Vizualization
-plot(x = recBest$Time,y=recBest$F,type = "l",xlab = "nb. fct. eval",ylab="f",col="red",xlim=c(1,nbFun))
+plot(x = recBest$Time,y=log(1+recBest$F),type = "l",xlab = "nb. fct. eval",ylab="log(1+f)",col="red",xlim=c(1,nbFun))
 if (printlevel >= 2){
   lines(x = rec$Time,y = rec$F,col="blue")
 }

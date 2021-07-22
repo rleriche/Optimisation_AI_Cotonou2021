@@ -56,7 +56,6 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
   res$xnew<-xp
   res$nFcalls <- nloop
   if (printlevel>=2) {res$rec <- lrec}
-  # browser()
   return(res)
 } ### end BacktrackLineSearch function
 
