@@ -20,9 +20,15 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
   # or as a fraction of domain diagonal. Take the max of both initial step sizes.
   stepSize <- max(initStepFact*normGrad,(l2norm(UB-LB)/100))
   decConst <- suffDecFact*(direction%*%gradf)
+  # if direction is not a descent direction, -direction is, use turnaround for this
+  turnaround <- 1 
+  if (decConst>0){
+    turnaround <- -1
+    decConst <- -decConst
+  }
   maxloop <- 100 # max line search budget
   #
-  xpp <- x+stepSize*direction
+  xpp <- x+stepSize*turnaround*direction
   # project on bounds
   xp <- ifelse(xpp < LB, LB, ifelse(xpp > UB, UB, xpp))
   fp <- f(xp)
@@ -33,7 +39,7 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
   }
   while ( (fp > fofx+stepSize*decConst) & (nloop<maxloop)) {
     stepSize <- stepSize*decFact
-    xpp <- x+stepSize*direction
+    xpp <- x+stepSize*turnaround*direction
     # project on bounds
     xp <- ifelse(xpp < LB, LB, ifelse(xpp > UB, UB, xpp))
     if (l2norm(xpp-xp)<1.e-10){ # only evaluate if point is in bounds,
@@ -53,3 +59,4 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
   # browser()
   return(res)
 } ### end BacktrackLineSearch function
+

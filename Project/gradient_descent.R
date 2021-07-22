@@ -25,8 +25,8 @@ fun<-rosen #function to minimize
 
 ### algorithm settings
 xinit <- c(4.5,3.5) #rep(-4.9,d) # initial point
-direction_type <- "momentum" # choices are : "gradient", "momentum", "NAG"
-linesearch_type <- "none" # choices are: "none", "armijo"
+direction_type <- "gradient" # choices are : "gradient", "momentum", "NAG"
+linesearch_type <- "armijo" # choices are: "none", "armijo"
 #   all algorithms have a search direction and a step size
 #       x_{t+1} <- x_t + stepSize*direction
 #   where direction is a vector of norm = 1 and stepSize a scalar
