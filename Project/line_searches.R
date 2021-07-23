@@ -12,8 +12,9 @@
 #   suffDecFact in [0,1[  used in the sufficient decrease test 
 #   decFact in ]0,1[   used to reduce stepSize
 BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
-                                suffDecFact=0.1,decFact=0.5,initStepFact=1){
-  res <- list()
+                                suffDecFact=0.1,decFact=0.5,initStepFact=1)
+{
+
   normGrad <- l2norm(gradf)
   # calculate initial stepSize
   # either as initStepFact*norm of gradient (but this may fail in flat regions)
@@ -27,18 +28,13 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
     decConst <- -decConst
   }
   maxloop <- 100 # max line search budget
+  nloop <- 1 # initialize loop counter
   #
-  xpp <- x+stepSize*turnaround*direction
-  # project on bounds
-  xp <- ifelse(xpp < LB, LB, ifelse(xpp > UB, UB, xpp))
-  fp <- f(xp)
-  nloop <- 1
-  if (printlevel>=2) {
-    lrec <- rec
-    lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)
-  }
+  res <- list()
+  if (printlevel>=2) {lrec <- rec}
+  fp <- .Machine$double.xmax # a very large number to get into the while loop
+  
   while ( (fp > fofx+stepSize*decConst) & (nloop<maxloop)) {
-    stepSize <- stepSize*decFact
     xpp <- x+stepSize*turnaround*direction
     # project on bounds
     xp <- ifelse(xpp < LB, LB, ifelse(xpp > UB, UB, xpp))
@@ -48,7 +44,9 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
       nloop <- nloop+1
       if (printlevel>=2) {lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)}
     }
-  }
+    stepSize <- stepSize*decFact
+  } # end while loop
+  
   if (nloop >= maxloop){ 
     msg <- paste("nloop=",nloop," larger than maxloop=",maxloop)
     warning(msg)

@@ -18,10 +18,10 @@ source('line_searches.R')
 
 ### problem definition
 # search space
-d<-10 # dimension
+d<-2 # dimension
 LB<-rep(-5,d) #lower bounds
 UB<-rep(5,d) #upper bounds
-fun<-quadratic #function to minimize
+fun<-rosen #function to minimize
 
 ### algorithm settings
 xinit <- rep(-4.9,d)#c(4.5,3.5) rep(-4.9,d) # initial point
@@ -100,7 +100,12 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
       # evaluate gradient at anticipated next point
       xnag <- x + beta*(x-xprevious)
       evalnag <- f.gradf(x=xnag,f=fun,h=1.e-8)
-      # we should account for this evaluation
+      nbFun <- nbFun+1 # this is a really basic accounting for the numerical cost
+      # of the gradient evaluation. In fact, if done with finite differences, 
+      # it costs d+1 evaluations. The cost of 1 is more in the spirit of having 
+      # an analytical evaluation of the gradient such as with retropropagation in NN.
+      # For the same reason we don't account for xnag in the best point so far 
+      # (it might only be a gradient evaluation).
       step <- -evalnag$gradf + beta*previous_step
     }
   }
