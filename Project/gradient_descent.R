@@ -8,8 +8,12 @@
 #   linesearch_type = (none, armijo)
 #
 # Implementation notes: 
-# * no attempt at making this code efficient, it is for teaching purpose.
-# * delete the global variables if you change dimension and optimize quadratic function.
+# * nbFun, the variable that counts the number of calls to the objective function
+#   counts 1 for a finite difference, which is not correct (it should be d+1), 
+#   but it would be correct for analytical gradients
+# * Delete the global variables if you change dimension and optimize quadratic function. 
+#   This is because the Hessian of the quadratic function depends on
+#   the global variable "glob_umat" and is not recalculated if glob_mat exists.
 #############################################
 rm(list=ls()) # clear environment
 source('test_functions.R')
@@ -27,28 +31,31 @@ fun<-rosen #function to minimize
 xinit <- rep(-4.9,d)#c(4.5,3.5) rep(-4.9,d) # initial point
 direction_type <- "NAG" # choices are : "gradient", "momentum", "NAG"
 linesearch_type <- "armijo" # choices are: "none", "armijo"
-#   all algorithms have a search direction and a step size
+#   All algorithms have a search direction and a step size
 #       x_{t+1} <- x_t + stepSize*direction
-#   where direction is a vector of norm = 1 and stepSize a scalar
-#   The direction and the stepSize are calculated in various ways:
-#   step : vector specific to direction_type
-#     e.g., direction_type == gradient , step = -gradf
-#     and other formula for other direction_type. Then,
-#     direction = step/l2norm(step) , 
-#   Without linesearch, stepSize = stepFactor*l2norm(step)
-#   Expl, for gradient&none :  stepSize = stepFactor*normGrad
-#   when linesearch_type is not none : stepSize comes from a linesearch, cf line_searches.R file
-stepFactor <- 0.1 # step factor when there is no line search, use depends on direction
+#   where direction is a vector of norm == 1 and stepSize a scalar
+#   The "direction" is the normalized "step", direction = step/l2norm(step)
+#   "step" : vector which depends on "direction_type" (gradient, momentum or NAG)
+#     Ex: if direction_type == gradient then step = -gradf
+#     and other formula for other direction_type. 
+#   Calculation of stepSize. It depends on "linesearch_type":
+#   When linesearch_type == "armijo" : stepSize comes from a line search, cf line_searches.R file
+#   When linesearch_type == "none" (no line search) : stepSize = stepFactor*l2norm(step)
+#   Expl for "gradient" & "none" :  stepSize = stepFactor*normGrad
+stepFactor <- 0.1 # step factor when there is no line search, 
 #   stepfactor ~ 1/Lipschitz_constant : the steeper the function, the smaller stepfactor
-beta <- 0.9 # momentum term
-#
+beta <- 0.9 # momentum term for direction_type == "momentum" or "NAG" 
+# here we keep it constant. Pradeep Ravikumar and Aarti Singh recommend
+#   beta <- (iter-2)/(iter+1) 
 printlevel <- 2 # controls how much is stored and printed
+#                 =0 no output
 #                 =1 store best and minimal output
 #                 =2 store all points and more outputs
-stopBudget <- 10000 # maximum number of function evaluations:
-#   the maximum number of calls to the function is larger because of the 
+stopBudget <- 10000 # maximum number of function evaluations
+#   The current true number of calls to the function is larger because of the 
 #   finite differences scheme: nbFun = (d+1)*iter+nbFunLS
 stopGradNorm <- 1.e-6 # stop when gradient norm / sqrt(d) is smaller than 
+stopStepSize <- 1.e-10 # stop if stepSize < stopStepSize
 
 ### initializations
 x <- xinit
@@ -56,8 +63,10 @@ eval <- f.gradf(x=x,f=fun,h=1.e-8) #eval$fofx is the function
                           # eval$gradf the associated gradient
 normGrad <- l2norm(eval$gradf)
 iter <- 1
-nbFun <- 1
-nbFunLS <- 0 # calls to fun done during the line search
+nbFun <- 1 # counts the number of calls to the objective function. 
+#       nbFun includes the calls done during line search and 1 call to 
+#       the gradient counts for 1 call to the objective function
+nbFunLS <- 0 # nb of calls to fun done during the line search
 # recordings of best so far
 Fbest <- eval$fofx
 recBest <- list()
@@ -74,7 +83,7 @@ if (printlevel >= 2){
 }
 
 
-### run the algo
+### start the search
 if (printlevel >=1) {
   startmsg <- paste0("Start ",direction_type," (direction) + ",linesearch_type," (line search) descent\n")
   cat(startmsg)
@@ -127,7 +136,7 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
     # evaluate new point
     eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
     normGrad <- l2norm(eval$gradf)
-    nbFun <- nbFun+1
+    nbFun <- nbFun+2 # +2 , +1 for the obj function, +1 for the gradient
     if (printlevel >=2 ) {rec <- updateRec(rec=rec,x=xnew,f=eval$fofx,t=nbFun)}
   } 
   else if (linesearch_type=="armijo"){
@@ -135,8 +144,10 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
     xnew <- lsres$xnew
     nbFun <- nbFun+lsres$nFcalls
     nbFunLS <- nbFunLS + lsres$nFcalls
-    # re-evaluate for the gradient and do not increment nbFun as the point has already been calculated in linesearch
+    # re-evaluate for the gradient and increment nbFun of 1 only 
+    # as the point has already been calculated in linesearch
     eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
+    nbFun <- nbFun+1
     normGrad <- l2norm(eval$gradf)
     if (printlevel>=2) {
       rec<-lsres$rec
@@ -189,6 +200,6 @@ if (d==2) {
     points(rec$X[,1], rec$X[,2], pch=20, col="blue")
     text(rec$X, labels=1:iter, pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
     points(recBest$X[,1], recBest$X[,2], pch=19, col="red") # bests so far in red (should resemble iterates)
+    # dev.off()
   }
-  # dev.off()
 }
