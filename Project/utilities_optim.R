@@ -1,4 +1,7 @@
 # set of utilities for simple optimization program
+# 
+# Rodolphe Le Riche, CNRS LIMOS, july 2021
+# 
 
 # calculate f and gradient of f by forward finite difference
 f.gradf <- function(x,f,h=1.e-8){

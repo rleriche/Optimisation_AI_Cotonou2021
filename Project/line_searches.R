@@ -1,18 +1,40 @@
 ### line search functions
+# 
+# Rodolphe Le Riche, CNRS LIMOS, july 2021
+# 
+
+### Backtracking with Armijo (sufficient decrease) condition
+#   find stepSize that satisfies : 
+#     f(x+stepSize*direction) <= f(x) + stepSize* (suffDecFact * direction^T*gradf)
+#   If direction is not a descend direction ( direction^T*gradf>0 ), 
+#     turn around (multiply direction by -1).
+# 
+# INPUTS
+# 
+#   x, fofx, gradf : current point, its objective function, the function gradient at x
+#   direction : direction in which to search. Not necessarily a descent direction (hence works with 
+#     momentum and NAG).
+#   suffDecFact : scalar in [0,1[  used in the sufficient decrease test, 
+#     i.e. how much better than Taylor is demanded. 
+#   decFact : scalar in ]0,1[ , used to reduce stepSize
+#   initStepFact : multiplicative factor of gradient norm to determine initial stepSize
+#   LB,UB : d-dimensional vectors of lower and upper bounds for the variables
+#   nbFun : total number of calls to the objective function before the line search started
 #
+# OUTPUTS
+#
+#   res$xnew : point solution of the line search (or last iterate if failure)
+#   res$nFcalls : number of calls to the objective function during line search
+#   res$rec : complete record (list with $X, $F and $Time fields) of the points 
+#     calculated during line search.
+# 
 # Implementation notes: 
 # * Some variables come from the calling environment:
 #   - LB, UB : lower and upper bounds
 #   - data used for recording calls to f: nbFun (nb of calls to f before routine is called)
 #     printlevel, rec (the list used for recording all calls)
-
-
-### Backtracking with Armijo (sufficient decrease) condition
-#   s must satisfy : f(x+s*d) <= f(x) + stepSize* (suffDecFact * d^T*gradf)
-#   suffDecFact in [0,1[  used in the sufficient decrease test 
-#   decFact in ]0,1[   used to reduce stepSize
 BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
-                                suffDecFact=0.1,decFact=0.5,initStepFact=1)
+                                suffDecFact=0.1,decFact=0.5,initStepFact=1,LB,UB,printlevel,nbFun)
 {
 
   normGrad <- l2norm(gradf)
@@ -31,7 +53,7 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
   nloop <- 1 # initialize loop counter
   #
   res <- list()
-  if (printlevel>=2) {lrec <- rec}
+  if (printlevel>=2) {lrec <- list()}
   fp <- .Machine$double.xmax # a very large number to get into the while loop
   
   while ( (fp > fofx+stepSize*decConst) & (nloop<maxloop)) {
@@ -39,7 +61,7 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
     # project on bounds
     xp <- ifelse(xpp < LB, LB, ifelse(xpp > UB, UB, xpp))
     if (l2norm(xpp-xp)<1.e-10){ # only evaluate if point is in bounds,
-      # otherwise decrease stepSize
+      # otherwise just decrease stepSize
       fp <- f(xp)
       nloop <- nloop+1
       if (printlevel>=2) {lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)}
@@ -48,7 +70,7 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
   } # end while loop
   
   if (nloop >= maxloop){ 
-    msg <- paste("nloop=",nloop," larger than maxloop=",maxloop)
+    msg <- paste("nloop=",nloop," larger than maxloop=",maxloop, ", output last iterate")
     warning(msg)
   }
   res$xnew<-xp
