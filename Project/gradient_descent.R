@@ -22,10 +22,10 @@ source('line_searches.R')
 
 ### problem definition
 # search space
-d<-2 # dimension
+d<-10 # dimension
 LB<-rep(-5,d) #lower bounds
 UB<-rep(5,d) #upper bounds
-fun<-rosen #function to minimize
+fun<-quadratic #function to minimize
 
 ### algorithm settings
 xinit <- rep(-4.9,d)#c(4.5,3.5) rep(-4.9,d) # initial point
@@ -51,11 +51,11 @@ printlevel <- 2 # controls how much is stored and printed
 #                 =0 no output
 #                 =1 store best and minimal output
 #                 =2 store all points and more outputs
-stopBudget <- 10000 # maximum number of function evaluations
+budget <- 10000 # maximum number of function evaluations
 #   The current true number of calls to the function is larger because of the 
 #   finite differences scheme: nbFun = (d+1)*iter+nbFunLS
-stopGradNorm <- 1.e-6 # stop when gradient norm / sqrt(d) is smaller than 
-stopStepSize <- 1.e-10 # stop if stepSize < stopStepSize
+minGradNorm <- 1.e-6 # stop when gradient norm / sqrt(d) is smaller than 
+minStepSize <- 1.e-11 # stop if stepSize < stopStepSize
 
 ### initializations
 x <- xinit
@@ -67,6 +67,10 @@ nbFun <- 1 # counts the number of calls to the objective function.
 #       nbFun includes the calls done during line search and 1 call to 
 #       the gradient counts for 1 call to the objective function
 nbFunLS <- 0 # nb of calls to fun done during the line search
+# stopping criteria:
+stopGradNorm<-FALSE
+stopBudget<-FALSE
+stopStepSize<-FALSE
 # recordings of best so far
 Fbest <- eval$fofx
 recBest <- list()
@@ -88,7 +92,7 @@ if (printlevel >=1) {
   startmsg <- paste0("Start ",direction_type," (direction) + ",linesearch_type," (line search) descent\n")
   cat(startmsg)
   }
-while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
+while (isFALSE(stopBudget) & isFALSE(stopGradNorm) & isFALSE(stopStepSize) ){
   
   if (direction_type=="gradient"){
     step <- -eval$gradf
@@ -159,9 +163,12 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
   # make the step
   iter <- iter+1
   previous_step <- step
-  # previous_step <- xnew-x
   xprevious <- x
   x <- xnew
+  # stopping conditions
+  if (nbFun >= budget){stopBudget<-TRUE}
+  if ((normGrad/sqrt(d)) <= minGradNorm){stopGradNorm<-TRUE}
+  if (l2norm(x-xprevious) <= minStepSize){stopStepSize<-TRUE}
 
   # bookkeeping
   if (eval$fofx < Fbest) {
@@ -175,6 +182,11 @@ while ((nbFun <= stopBudget) & ((normGrad/sqrt(d)) > stopGradNorm) ){
 
 if (printlevel >= 1){
   cat("Search exited after ",iter," iterations, ",nbFun," fct evaluations\n")
+  stopMsg <- ""
+  if (stopBudget) {stopMsg <- paste(stopMsg,"max budget reached") }
+  if (stopGradNorm) {stopMsg <-paste(stopMsg,"small gradient norm") }
+  if (stopStepSize) {stopMsg <-paste(stopMsg,"small step size") }
+  cat("Active stopping criteria :",stopMsg,"\n")
   lrecBest <- dim(recBest$X)[1]
   cat('best x:',recBest$X[lrecBest,],'\n')
   cat('best f:',recBest$F[lrecBest],'\n')
