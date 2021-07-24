@@ -28,11 +28,7 @@
 #   res$rec : complete record (list with $X, $F and $Time fields) of the points 
 #     calculated during line search.
 # 
-# Implementation notes: 
-# * Some variables come from the calling environment:
-#   - LB, UB : lower and upper bounds
-#   - data used for recording calls to f: nbFun (nb of calls to f before routine is called)
-#     printlevel, rec (the list used for recording all calls)
+
 BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
                                 suffDecFact=0.1,decFact=0.5,initStepFact=1,LB,UB,printlevel,nbFun)
 {
@@ -53,7 +49,7 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
   nloop <- 1 # initialize loop counter
   #
   res <- list()
-  if (printlevel>=2) {lrec <- list()}
+  if (printlevel>=3) {lrec <- list()}
   fp <- .Machine$double.xmax # a very large number to get into the while loop
   
   while ( (fp > fofx+stepSize*decConst) & (nloop<maxloop)) {
@@ -64,7 +60,7 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
       # otherwise just decrease stepSize
       fp <- f(xp)
       nloop <- nloop+1
-      if (printlevel>=2) {lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)}
+      if (printlevel>=3) {lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)}
     }
     stepSize <- stepSize*decFact
   } # end while loop
@@ -75,7 +71,7 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
   }
   res$xnew<-xp
   res$nFcalls <- nloop
-  if (printlevel>=2) {res$rec <- lrec}
+  if (printlevel>=3) {res$rec <- lrec}
   return(res)
 } ### end BacktrackLineSearch function
 

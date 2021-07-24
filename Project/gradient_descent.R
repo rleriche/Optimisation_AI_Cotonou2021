@@ -50,9 +50,11 @@
 #   algoParam$minStepSize : stop if stepSize < stopStepSize. Default is 1.e-11 
 #
 # printlevel : controls how much is stored and printed
-#                 =0 store best history, no output
-#                 =1 store best history and minimal output (default)
-#                 =2 store all points, best history, and more outputs (extra plots in particular when d==2)
+#                 =0 store overall best only, no plot
+#                 =1 store best history, silent (no plot, no output)
+#                 =2 store best history and plot it, some messages
+#                 =3 store best history and all points, no plot
+#                 =4 store all points, best history, plot it + extra plots in particular when d==2
 # 
 # OUTPUTS
 # 
@@ -134,7 +136,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   recBest$Time <- c(nbFun)
   # below are recordings of the whole history. Memory consuming. 
   # If memory issues, set printlevel<2
-  if (printlevel >= 2){
+  if (printlevel >= 3){
     rec <- list()
     rec$X <- matrix(x,nrow=1)
     rec$F <- eval$fofx
@@ -143,7 +145,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   
   
   ### start the search
-  if (printlevel >=1) {
+  if (printlevel >=2) {
     startmsg <- paste0("Start ",direction_type," (direction) + ",linesearch_type," (line search) descent\n")
     cat(startmsg)
   }
@@ -196,7 +198,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
       eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
       normGrad <- l2norm(eval$gradf)
       nbFun <- nbFun+2 # +2 , +1 for the obj function, +1 for the gradient
-      if (printlevel >=2 ) {rec <- updateRec(rec=rec,x=xnew,f=eval$fofx,t=nbFun)}
+      if (printlevel >=3 ) {rec <- updateRec(rec=rec,x=xnew,f=eval$fofx,t=nbFun)}
     } 
     else if (linesearch_type=="armijo"){
       lsres <- BacktrackLineSearch(x=x,fofx=eval$fofx,gradf=eval$gradf,
@@ -210,7 +212,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
       eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
       nbFun <- nbFun+1
       normGrad <- l2norm(eval$gradf)
-      if (printlevel>=2) {
+      if (printlevel>=3) {
         rec <- updateRec(rec=rec,x=lsres$rec$X,f=lsres$rec$F,t=lsres$rec$Time)
       }
     }
@@ -232,7 +234,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
       Fbest <- eval$fofx
       recBest <- updateRec(rec=recBest,x=xnew,f=Fbest,t=nbFun)
     }
-    if (printlevel >= 1){
+    if (printlevel >= 2){
       cat(" iteration : ",iter,"\r")
     } 
   } # end while of main loop
@@ -247,9 +249,9 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   if (stopGradNorm) res$stopCode<-2
   if (stopStepSize) res$stopCode<-3
   res$recBest <- recBest
-  if (printlevel >= 2) {res$rec <- rec} 
+  if (printlevel >= 3) {res$rec <- rec} 
   #
-  if (printlevel >= 1){
+  if (printlevel >= 2){
     cat("Search exited after ",iter," iterations, ",nbFun," fct evaluations\n")
     stopMsg <- ""
     if (stopBudget) {stopMsg <- paste(stopMsg,"max budget reached") }
@@ -262,11 +264,11 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   
   ### Vizualization
   plot(x = recBest$Time,y=log(1+recBest$F),type = "l",xlab = "nb. fct. eval",ylab="log(1+f)",col="red",xlim=c(1,nbFun))
-  if (printlevel >= 2){
+  if (printlevel >= 4){
     lines(x = rec$Time,y = log(1+rec$F),col="blue")
   }
   if (d==2) { 
-    if (printlevel >=2){
+    if (printlevel >=4){
       # the code below is mainly a duplicate of what is in 3Dplots ... 
       no.grid <- 100
       x1 <- seq(LB[1], UB[1], length.out=no.grid)
@@ -286,3 +288,4 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   
   return(res)
 }
+
