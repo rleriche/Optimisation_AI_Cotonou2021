@@ -9,7 +9,7 @@ source("./test_functions.R")
 # function dimension
 dim <- 2
 # choose a function from test_functions.R file
-fun <- rosen
+fun <- schwefel
 # upper and lower bounds
 LB<-c(-5,-5) 
 UB<-c(5,5)
@@ -30,7 +30,7 @@ contour(x1, x2, z.grid, nlevels=20, xlab="x1", ylab="x2")
 #### 3D rgl plot
 open3d()
 surface3d(x1, x2, z.grid, col= "lightblue")
-title3d("quadratic", col="blue", font=4)
+title3d("a 2D function", col="blue", font=4)
 decorate3d()
 aspect3d(1, 1, 1)
 rgl.snapshot("./fileofplot.png", fmt="png", top=T)

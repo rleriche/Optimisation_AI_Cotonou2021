@@ -15,7 +15,7 @@ source('restarted_descent.R')
 ### problem definition
 # search space
 pbFormulation <- list()
-pbFormulation$fun<-rastrigin #function to minimize
+pbFormulation$fun<-schwefel #function to minimize, examples in test_functions.R
 d<-2
 pbFormulation$d<-d # dimension
 pbFormulation$LB<-rep(-5,d) #lower bounds
@@ -30,7 +30,7 @@ optAlgoParam$budget <- 3000
 optAlgoParam$minGradNorm <- 1.e-6 
 optAlgoParam$minStepSize <- 1.e-11 
 #
-optAlgoParam$direction_type <- "gradient" # choices are : "gradient", "momentum", "NAG"
+optAlgoParam$direction_type <- "momentum" # choices are : "gradient", "momentum", "NAG"
 optAlgoParam$linesearch_type <- "armijo" # choices are: "none", "armijo"
 optAlgoParam$stepFactor <- 0.1 # step factor when there is no line search, 
 optAlgoParam$beta <- 0.9 # momentum term for direction_type == "momentum" or "NAG" 
@@ -41,6 +41,6 @@ printlevel <- 4 # controls how much is stored and printed, choices: 0 to 4
 # res<-gradient_descent(pbFormulation=pbFormulation,algoParam=optAlgoParam,printlevel=printlevel)
 
 # a restarted descent
-optAlgoParam$nb_restarts <- 3
+optAlgoParam$nb_restarts <- 5
 cres <- restarted_descent(pbFormulation=pbFormulation,algoParam = optAlgoParam,printlevel=printlevel)
   

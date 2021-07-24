@@ -29,3 +29,36 @@ updateRec <- function(arec,x,f,t){
 l2norm <- function(x){
   return(sqrt(sum(x^2)))
 }
+
+# plot contour of function when d==2
+plot_contour <- function(LB,UB,f){
+  no.grid <- 100
+  x1 <- seq(LB[1], UB[1], length.out=no.grid)
+  x2 <- seq(LB[2], UB[2], length.out=no.grid)
+  x.grid <- expand.grid(x1, x2)
+  z <- apply(x.grid, 1, f)
+  z.grid <- matrix(z, no.grid)
+  contour(x1, x2, z.grid, nlevels=20, xlab="x1", ylab="x2")
+}
+
+# increasing sequence: useful to plot first points and then fewer and fewer
+inc.geom.seq <- function(from=1,to=1000,coef=1.4)
+{
+  s <- c(round(from))
+  x <- from
+  i <- 1
+  ieff <- 1
+  done <- FALSE
+  while (!done){
+    x <- x*coef
+    sp <- round(x)
+    if (sp != s[ieff]){
+      s <- c(s,sp)
+      ieff <- ieff+1
+      if (sp>to) done<-TRUE
+    }
+    i <- i+1
+  }
+  s<-s[-ieff]
+  return(s)
+}

@@ -115,7 +115,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
     
   ### initializations
   x <- algoParam$xinit
-  eval <- f.gradf(x=x,f=fun,h=1.e-8) #eval$fofx is the function 
+  eval <- f.gradf(x=x,f=fun,h=1.e-8) #eval$fofx is the function value
   # eval$gradf the associated gradient
   normGrad <- l2norm(eval$gradf)
   iter <- 1
@@ -267,29 +267,27 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
     cat('best f:',res$fbest,'\n')
   }
   
-  ### Vizualization
+  ### Visualization
   if (!silent) {
     plot(x = rBest$Time,y=log(1+rBest$F),type = "l",xlab = "nb. fct. eval",ylab="log(1+f)",col="red",xlim=c(1,nbFun))
     if (printlevel >= 4){
       lines(x = rec$Time,y = log(1+rec$F),col="blue")
     }
     if (d==2) { 
-      if (printlevel >=4){
-        # the code below is mainly a duplicate of what is in 3Dplots ... 
-        no.grid <- 100
-        x1 <- seq(LB[1], UB[1], length.out=no.grid)
-        x2 <- seq(LB[2], UB[2], length.out=no.grid)
-        x.grid <- expand.grid(x1, x2)
-        z <- apply(x.grid, 1, fun)
-        z.grid <- matrix(z, no.grid)
+      if (printlevel >=2){
         # png(filename="./contour.png") # save the contour in the current directory
-        contour(x1, x2, z.grid, nlevels=20, xlab="x1", ylab="x2")
-        # with search points on top
-        points(rec$X[,1], rec$X[,2], pch=20, col="blue")
-        text(rec$X, labels=rec$Time, pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
-        points(rBest$X[,1], rBest$X[,2], pch=19, col="red") # bests so far in red (should resemble iterates)
+        plot_contour(LB=LB,UB=UB,f=fun)
+        if (printlevel >=4){
+          # all search points on top
+          points(rec$X[,1], rec$X[,2], pch=20, col="blue", cex=0.5)        
+        }
+        # put a selection of best-so-far on top in red (should resemble iterates)
+        points(rBest$X[,1], rBest$X[,2], pch=19, col="red") 
+        iplot <- inc.geom.seq(from=1,to=length(rBest$Time),coef=1.4) # selection, otherwise unreadable
+        text(x=rBest$X[iplot,1], y=rBest$X[iplot,2],labels=rBest$Time[iplot], pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
         # dev.off()
       }
+
     } # end if d==2
   } # end if !silent
   
