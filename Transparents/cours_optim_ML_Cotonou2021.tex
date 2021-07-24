@@ -298,7 +298,7 @@ R code to generate the plot given in the project folder
 \frametitle{Gradient of a function} 
 Gradient of a function = direction of steepest ascent = vector of partial derivatives
 \begin{equation*}
-\nabla f(x) = \begin{pmatrix} \frac{\partial f}{\partial x_1}(x) \\ \ldots \\ \frac{\partial f}{\partial x_d}(x) \end{pmatrix}
+\grad f(x) = \begin{pmatrix} \frac{\partial f}{\partial x_1}(x) \\ \ldots \\ \frac{\partial f}{\partial x_d}(x) \end{pmatrix}
 \end{equation*}
 \begin{center}
 \begin{minipage}[t]{0.7\textwidth}
@@ -318,8 +318,8 @@ By forward finite differences
 \end{equation*}
 {Proof: \scriptsize
  by Taylor,\\
-$f(x+he^i) = f(x) + h {e^i}^\top \nabla f(x) + h^2/2 {e^i}^\top \nabla^2 f(x+\rho h e^i) e^i~,~\rho\in ]0,1[$ \\
-$\nabla f(x) = \frac{f(x+he^i)-f(x)}{h} - h/2 {e^i}^\top \nabla^2 f(x+\rho h e^i) e^i $ \\
+$f(x+he^i) = f(x) + h {e^i}^\top \grad f(x) + h^2/2 {e^i}^\top \hess f(x+\rho h e^i) e^i~,~\rho\in ]0,1[$ \\
+$\grad f(x) = \frac{f(x+he^i)-f(x)}{h} - h/2 {e^i}^\top \hess f(x+\rho h e^i) e^i $ \\
 and make $h$ very small $\square$
 }
 \end{minipage}
@@ -336,7 +336,7 @@ Other (better but more difficult to implement) schemes: central differences, aut
 \frametitle{Descent direction} 
 \mbox{
 \begin{minipage}[b]{0.5\textwidth}
-A search direction $d$ which makes an acute angle with $-\nabla f(x)$ is a descent direction, i.e., for a small enough step $f$ is guaranteed to decrease!
+A search direction $d$ which makes an acute angle with $-\grad f(x)$ is a descent direction, i.e., for a small enough step $f$ is guaranteed to decrease!
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.4\textwidth}
@@ -346,8 +346,8 @@ A search direction $d$ which makes an acute angle with $-\nabla f(x)$ is a desce
 \\\vspace{0.8cm}
 {\normalsize
 Proof: by Taylor, $\forall \alpha \le 0,~\exists \epsilon \in [0,1]$ such that
-$f(x+\alpha d) = f(x) + \alpha d^\top \nabla f(x) + \frac{\alpha^2}{2} d^\top \nabla^2f(x + \alpha \epsilon d) d$\\
-$\lim_{\alpha \rightarrow 0^+} \frac{f(x+\alpha d) - f(x)}{\alpha} = d^\top \nabla f(x) = - 1\times \lVert \nabla f(x)\rVert \cos(d,-\nabla f(x))$ \\
+$f(x+\alpha d) = f(x) + \alpha d^\top \grad f(x) + \frac{\alpha^2}{2} d^\top \hess f(x + \alpha \epsilon d) d$\\
+$\lim_{\alpha \rightarrow 0^+} \frac{f(x+\alpha d) - f(x)}{\alpha} = d^\top \grad f(x) = - 1\times \lVert \grad f(x)\rVert \cos(d,-\grad f(x))$ \\
 is negative if the cosine is positive $\square$
 } %end small
 \end{frame}
@@ -357,7 +357,7 @@ is negative if the cosine is positive $\square$
 \frametitle{Necessary optimality condition (1)} 
 A necessary condition for a differentiable function to have a minimum at $x^\star$ is that it is flat at this point, i.e., its gradient is null
 \begin{equation*}
-x^\star \in \arg \min_{x \in \mathcal S} f(x) \Rightarrow \nabla f(x^\star) = 0
+x^\star \in \arg \min_{x \in \mathcal S} f(x) \Rightarrow \grad f(x^\star) = 0
 \end{equation*}
 \vskip\baselineskip
 \begin{center}
@@ -380,7 +380,7 @@ necessary is not sufficient (works with a max)
 \frametitle{Necessary optimality condition (3)} 
 \begin{center}
 \includegraphics[width=0.7\textwidth]{flat_valley.png} \\
-$\nabla f(x^\star) = 0$ does not make $x^\star$ unique (flat valley)
+$\grad f(x^\star) = 0$ does not make $x^\star$ unique (flat valley)
 \end{center}
 \end{frame}
 
@@ -389,7 +389,7 @@ $\nabla f(x^\star) = 0$ does not make $x^\star$ unique (flat valley)
 \frametitle{Necessary optimality condition (4)} 
 \begin{center}
 \includegraphics[width=0.7\textwidth]{L1norm.png} \\
-$\nabla f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i \rvert$
+$\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i \rvert$
 \end{center}
 \end{frame}
 
