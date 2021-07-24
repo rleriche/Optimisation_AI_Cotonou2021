@@ -18,11 +18,11 @@ f.gradf <- function(x,f,h=1.e-8){
 }
 
 # record points online
-updateRec <- function(rec,x,f,t){
-  rec$X <- rbind(rec$X,x)
-  rec$F <- c(rec$F,f)
-  rec$Time <- c(rec$Time,t)
-  return(rec)
+updateRec <- function(arec,x,f,t){
+  if (is.null(arec$X)) {arec$X<-x} else {arec$X <- rbind(arec$X,x)}
+  if (is.null(arec$F)) {arec$F<-f} else {arec$F <- c(arec$F,f)}
+  if (is.null(arec$Time)) {arec$Time<-t} else {arec$Time <- c(arec$Time,t)}
+  return(arec)
 }
 
 # L2 norm

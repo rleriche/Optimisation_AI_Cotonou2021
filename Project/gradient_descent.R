@@ -53,7 +53,7 @@
 #                 =0 store overall best only, no plot
 #                 =1 store best history, silent (no plot, no output)
 #                 =2 store best history and plot it, some messages
-#                 =3 store best history and all points, no plot
+#                 =3 store best history and all points, silent, no plot
 #                 =4 store all points, best history, plot it + extra plots in particular when d==2
 # 
 # OUTPUTS
@@ -66,9 +66,9 @@
 #       = 1 for budget exhausted
 #       = 2 too small gradient norm
 #       = 3 too small step
-#   res$recBest : history of best so far points
+#   res$rBest : history of best so far points
 #   res$rec : history of all computed points
-#   Both res$rec and res$recBest are lists with fields $X for the points, 
+#   Both res$rec and res$rBest are lists with fields $X for the points, 
 #     $F for the associated function, $Time for the number of fun calls 
 #     when it was discovered.
 # 
@@ -80,8 +80,6 @@
 #   This is because the Hessian of the quadratic function depends on
 #   the global variable "glob_umat" and is not recalculated if glob_mat exists.
 #############################################
-source('utilities_optim.R')
-source('line_searches.R')
 
 gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   ### process input parameters
@@ -113,6 +111,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   else minGradNorm <- algoParam$minGradNorm 
   if (is.null(algoParam$minStepSize)) minStepSize <- 1.e-11
   else minStepSize <- algoParam$minStepSize
+  if ((printlevel >=2) & (printlevel != 3)) silent<-FALSE else silent<-TRUE
     
   ### initializations
   x <- algoParam$xinit
@@ -129,11 +128,14 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   stopBudget<-FALSE
   stopStepSize<-FALSE
   # recordings of best so far
-  Fbest <- eval$fofx
-  recBest <- list()
-  recBest$X <- matrix(x,nrow=1)
-  recBest$F <- Fbest
-  recBest$Time <- c(nbFun)
+  fbest <- eval$fofx
+  xbest <- x
+  if (printlevel >= 1){
+    rBest <- list()
+    rBest$X <- matrix(x,nrow=1)
+    rBest$F <- fbest
+    rBest$Time <- c(nbFun)    
+  }
   # below are recordings of the whole history. Memory consuming. 
   # If memory issues, set printlevel<2
   if (printlevel >= 3){
@@ -145,7 +147,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   
   
   ### start the search
-  if (printlevel >=2) {
+  if (!silent) {
     startmsg <- paste0("Start ",direction_type," (direction) + ",linesearch_type," (line search) descent\n")
     cat(startmsg)
   }
@@ -198,7 +200,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
       eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
       normGrad <- l2norm(eval$gradf)
       nbFun <- nbFun+2 # +2 , +1 for the obj function, +1 for the gradient
-      if (printlevel >=3 ) {rec <- updateRec(rec=rec,x=xnew,f=eval$fofx,t=nbFun)}
+      if (printlevel >=3 ) {rec <- updateRec(arec=rec,x=xnew,f=eval$fofx,t=nbFun)}
     } 
     else if (linesearch_type=="armijo"){
       lsres <- BacktrackLineSearch(x=x,fofx=eval$fofx,gradf=eval$gradf,
@@ -213,7 +215,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
       nbFun <- nbFun+1
       normGrad <- l2norm(eval$gradf)
       if (printlevel>=3) {
-        rec <- updateRec(rec=rec,x=lsres$rec$X,f=lsres$rec$F,t=lsres$rec$Time)
+        rec <- updateRec(arec=rec,x=lsres$rec$X,f=lsres$rec$F,t=lsres$rec$Time)
       }
     }
     else {
@@ -230,28 +232,31 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
     if (l2norm(x-xprevious) <= minStepSize){stopStepSize<-TRUE}
     
     # bookkeeping
-    if (eval$fofx < Fbest) {
-      Fbest <- eval$fofx
-      recBest <- updateRec(rec=recBest,x=xnew,f=Fbest,t=nbFun)
+    if (eval$fofx < fbest) {
+      fbest <- eval$fofx
+      xbest <- x
+      if (printlevel >=1) {
+        rBest <- updateRec(arec=rBest,x=xnew,f=fbest,t=nbFun)
+      }
     }
-    if (printlevel >= 2){
+    if (!silent){
       cat(" iteration : ",iter,"\r")
     } 
   } # end while of main loop
   
   # gather final results
   res <- list()
-  lrecBest <- dim(recBest$X)[1]
-  res$xbest <-recBest$X[lrecBest,] 
-  res$fbest <-recBest$F[lrecBest]
+  # lrBest <- dim(rBest$X)[1]
+  res$xbest <-xbest 
+  res$fbest <-fbest
   res$nbFun <- nbFun
   if (stopBudget) res$stopCode<-1
   if (stopGradNorm) res$stopCode<-2
   if (stopStepSize) res$stopCode<-3
-  res$recBest <- recBest
+  if (printlevel >=1) res$rBest <- rBest
   if (printlevel >= 3) {res$rec <- rec} 
   #
-  if (printlevel >= 2){
+  if (!silent){
     cat("Search exited after ",iter," iterations, ",nbFun," fct evaluations\n")
     stopMsg <- ""
     if (stopBudget) {stopMsg <- paste(stopMsg,"max budget reached") }
@@ -263,28 +268,30 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
   }
   
   ### Vizualization
-  plot(x = recBest$Time,y=log(1+recBest$F),type = "l",xlab = "nb. fct. eval",ylab="log(1+f)",col="red",xlim=c(1,nbFun))
-  if (printlevel >= 4){
-    lines(x = rec$Time,y = log(1+rec$F),col="blue")
-  }
-  if (d==2) { 
-    if (printlevel >=4){
-      # the code below is mainly a duplicate of what is in 3Dplots ... 
-      no.grid <- 100
-      x1 <- seq(LB[1], UB[1], length.out=no.grid)
-      x2 <- seq(LB[2], UB[2], length.out=no.grid)
-      x.grid <- expand.grid(x1, x2)
-      z <- apply(x.grid, 1, fun)
-      z.grid <- matrix(z, no.grid)
-      # png(filename="./contour.png") # save the contour in the current directory
-      contour(x1, x2, z.grid, nlevels=20, xlab="x1", ylab="x2")
-      # with search points on top
-      points(rec$X[,1], rec$X[,2], pch=20, col="blue")
-      text(rec$X, labels=rec$Time, pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
-      points(recBest$X[,1], recBest$X[,2], pch=19, col="red") # bests so far in red (should resemble iterates)
-      # dev.off()
+  if (!silent) {
+    plot(x = rBest$Time,y=log(1+rBest$F),type = "l",xlab = "nb. fct. eval",ylab="log(1+f)",col="red",xlim=c(1,nbFun))
+    if (printlevel >= 4){
+      lines(x = rec$Time,y = log(1+rec$F),col="blue")
     }
-  }
+    if (d==2) { 
+      if (printlevel >=4){
+        # the code below is mainly a duplicate of what is in 3Dplots ... 
+        no.grid <- 100
+        x1 <- seq(LB[1], UB[1], length.out=no.grid)
+        x2 <- seq(LB[2], UB[2], length.out=no.grid)
+        x.grid <- expand.grid(x1, x2)
+        z <- apply(x.grid, 1, fun)
+        z.grid <- matrix(z, no.grid)
+        # png(filename="./contour.png") # save the contour in the current directory
+        contour(x1, x2, z.grid, nlevels=20, xlab="x1", ylab="x2")
+        # with search points on top
+        points(rec$X[,1], rec$X[,2], pch=20, col="blue")
+        text(rec$X, labels=rec$Time, pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
+        points(rBest$X[,1], rBest$X[,2], pch=19, col="red") # bests so far in red (should resemble iterates)
+        # dev.off()
+      }
+    } # end if d==2
+  } # end if !silent
   
   return(res)
 }

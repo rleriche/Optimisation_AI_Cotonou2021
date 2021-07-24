@@ -60,7 +60,7 @@ BacktrackLineSearch <- function(x,fofx,gradf,direction,f,
       # otherwise just decrease stepSize
       fp <- f(xp)
       nloop <- nloop+1
-      if (printlevel>=3) {lrec<-updateRec(rec=lrec,x=xp,f=fp,t=nbFun+nloop)}
+      if (printlevel>=3) {lrec<-updateRec(arec=lrec,x=xp,f=fp,t=nbFun+nloop)}
     }
     stepSize <- stepSize*decFact
   } # end while loop

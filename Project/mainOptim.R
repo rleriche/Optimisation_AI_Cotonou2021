@@ -7,6 +7,8 @@
 #
 rm(list=ls()) # clear environment
 source('test_functions.R')
+source('utilities_optim.R')
+source('line_searches.R')
 source('gradient_descent.R')
 source('restarted_descent.R')
 
@@ -40,5 +42,5 @@ printlevel <- 4 # controls how much is stored and printed, choices: 0 to 4
 
 # a restarted descent
 optAlgoParam$nb_restarts <- 3
-res <- restarted_descent(pbFormulation,optAlgoParam,printlevel=4)
+cres <- restarted_descent(pbFormulation=pbFormulation,algoParam = optAlgoParam,printlevel=printlevel)
   
