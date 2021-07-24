@@ -334,8 +334,22 @@ Other (better but more difficult to implement) schemes: central differences, aut
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Descent direction} 
-\textcolor{red}{(work in progress)}
-Taylor to prove what is a descent direction (a direction which makes an angle smaller than 90 deg with minus the gradient)
+\mbox{
+\begin{minipage}[b]{0.5\textwidth}
+A search direction $d$ which makes an acute angle with $-\nabla f(x)$ is a descent direction, i.e., for a small enough step $f$ is guaranteed to decrease!
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.4\textwidth}
+\includegraphics[width=\textwidth]{descent_direction-crop.pdf}
+\end{minipage}
+}
+\\\vspace{0.8cm}
+{\normalsize
+Proof: by Taylor, $\forall \alpha \le 0,~\exists \epsilon \in [0,1]$ such that
+$f(x+\alpha d) = f(x) + \alpha d^\top \nabla f(x) + \frac{\alpha^2}{2} d^\top \nabla^2f(x + \alpha \epsilon d) d$\\
+$\lim_{\alpha \rightarrow 0^+} \frac{f(x+\alpha d) - f(x)}{\alpha} = d^\top \nabla f(x) = - 1\times \lVert \nabla f(x)\rVert \cos(d,-\nabla f(x))$ \\
+is negative if the cosine is positive $\square$
+} %end small
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
