@@ -637,6 +637,10 @@ Recall fixed step gradient descent,
 x^{i+1} = x^i + \alpha s^i  \quad\text{ where }\quad s^i= -\grad f(x^i) 
 \end{equation*} 
 Introduce a momentum (i.e., a memory) in the search step,
+\begin{equation*} 
+s^i = -\grad f(x^i) + \beta s^{i-1}
+\end{equation*} 
+where\footnote{alternatively, for iteration varying momentum, $\beta^i=(i-2)/(i+1)$} $\beta = 0.9$
 \wip
 \end{frame}
 
