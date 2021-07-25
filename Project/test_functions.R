@@ -61,7 +61,7 @@ michalewicz <- function(xx, m=10){
 ##### quadratic function #########"
 quadratic <- function(xx){
   glob_xstar <- rep(0,length(xx))
-  cond.no <- 3
+  cond.no <- 10
   aa <- 1.024*xx
   d <- length(aa)
   xstar <- glob_xstar

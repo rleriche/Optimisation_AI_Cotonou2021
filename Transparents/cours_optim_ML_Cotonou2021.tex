@@ -414,8 +414,8 @@ $\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i 
 \end{equation*}
 \begin{itemize}
 \item Except for special cases (e.g., convex quadratic problems), the solution is not obtained analytically through the optimality conditions ($\grad f(x^\star) = 0$ + higher order conditions). 
-\item We typically use iterative algorithms: $x^{t+1}$ depends on previous iterates, $x^1,\ldots,x^t$ and their $f$'s.
-\item $t$ as a reference to computing time, because often calculating $f(x^t)$ takes more computation than the optimization algorithm itself.
+\item We typically use iterative algorithms: $x^{i+1}$ depends on previous iterates, $x^1,\ldots,x^i$ and their $f$'s.
+\item Often calculating $f(x^i)$ takes more computation than the optimization algorithm itself.
 \item Qualities of an optimizer: robustness, speed of convergence. Often have to strike a compromise between them.
 \end{itemize}
 \end{frame}
@@ -429,17 +429,17 @@ Repeat steps along the steepest descent direction, $-\grad f(x^t)$. \\
 The size of the steps is proportional to the gradient norm.
 \begin{block}{}
 \begin{algorithmic}
-\REQUIRE $f()$, $\alpha \in ]0,1]$, $x^1$, $\epsilon^{\text{step}}$, $\epsilon^{\text{grad}}$, $t^{\text{max}}$
-\STATE $t\leftarrow 0$, $f^{\text{best so far}} \leftarrow $ \texttt{max\_double}
+\REQUIRE $f()$, $\alpha \in ]0,1]$, $x^1$, $\epsilon^{\text{step}}$, $\epsilon^{\text{grad}}$, $i^{\text{max}}$
+\STATE $i\leftarrow 0$, $f^{\text{best so far}} \leftarrow $ \texttt{max\_double}
 \REPEAT 
-\STATE $t \leftarrow t+1$
-\STATE calculate $f(x^t)$ and $\grad f(x^t)$
-\IF{$f(x^t)< f^{\text{best so far}}$} 
+\STATE $i \leftarrow i+1$
+\STATE calculate $f(x^i)$ and $\grad f(x^i)$
+\IF{$f(x^i)< f^{\text{best so far}}$} 
 \STATE update $x^{\text{best so far}}$ and $f^{\text{best so far}}$ with current iterate
 \ENDIF
-\STATE \textbf{direction: } $d^t = - \grad f(x^t) / \lVert \grad f(x^t) \rVert$
-\STATE \textbf{step: } \textcolor{red}{$x^{t+1} ~=~ x^t + \alpha \lVert \grad f(x^t) \rVert d^t$}
-\UNTIL{ {$t>t^{\text{max}}$} \OR {$\lVert x^t - x^{t-1}\rVert \le \epsilon^{\text{step}}$} \OR {$\lVert \grad f(x^t)\rVert \le \epsilon^{\text{grad}}$} }
+\STATE \textbf{direction: } $d^i = - \grad f(x^i) / \lVert \grad f(x^i) \rVert$
+\STATE \textbf{step: } $x^{i+1} ~=~ x^i + \alpha \lVert \grad f(x^i) \rVert d^i$
+\UNTIL{ {$i>i^{\text{max}}$} \OR {$\lVert x^i - x^{i-1}\rVert \le \epsilon^{\text{step}}$} \OR {$\lVert \grad f(x^i)\rVert \le \epsilon^{\text{grad}}$} }
 \RETURN $x^{\text{best so far}}$ and $f^{\text{best so far}}$
 \end{algorithmic}
 \end{block}
@@ -465,17 +465,140 @@ The size of the steps is proportional to the gradient norm.
 \end{center}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Fixed step steepest descent algorithm (3)} 
+$\alpha=0.1$ on $f(x)=$ Rosenbrock (banana shaped) function in $d=2$ dimensions, example of divergence:
+\vskip\baselineskip
+\begin{center}
+\begin{minipage}[b]{0.3\textwidth}
+\includegraphics[width=\textwidth]{gradient_rosen_alpha0.1_f_diverges-crop.pdf} 
+\end{minipage}
+\hspace{1.5cm}
+\begin{minipage}[b]{0.3\textwidth}
+\includegraphics[width=\textwidth]{gradient_rosen_alpha0.1_x_diverges-crop.pdf} 
+\end{minipage}
+\end{center}
+\end{frame}
+
 \subsection{Line search}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Steepest descent with line search} 
-oscillations thus need better directions
-\wip
+\frametitle{Descent with line search} 
+\vspace{-0.5cm}
+At each iteration, search for the best step size in the descent\footnote{if $d^i$ is not a descent direction, $-d^i$ is. Proof left as exercise.} direction $d^i$ (which for now is $-\grad f(x^i)/\lVert \grad f(x^i) \rVert$ but it is general).\\ 
+Same algorithm as before, just change the \textbf{step} instruction:
+\begin{block}{}
+\begin{algorithmic}
+\REQUIRE \ldots
+\STATE initializations but no $\alpha$ now \ldots
+\REPEAT
+\STATE increment $i$, calculate $f(x^i)$ and $\grad f(x^i)$ \ldots
+\STATE \textbf{direction: } $d^i = - \grad f(x^i) / \lVert \grad f(x^i) \rVert$ or any other \textbf{descent} direction
+\STATE \textbf{step: } \textcolor{red}{$\alpha^{i} = \arg \min_{\alpha > 0} f(x^i+\alpha d^i)$ \\
+\hspace{1.5cm}$x^{i+1} ~=~ x^i + \alpha^i d^i$
+} % end red
+\UNTIL stopping criteria
+\RETURN best so far
+\end{algorithmic}
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Approximate line search (1)} 
+Notation: during line search $i$, 
+\begin{eqnarray*}
+x &=& x^i + \alpha d^i \\
+f(\alpha) &=& f(x^i + \alpha d^i) \\
+\frac{df(0)}{d\alpha} &=& \sum_{j=1}^d \frac{\partial f(x^i)}{\partial x_j} \frac{\partial x_j}{\partial \alpha}
+~=~\sum_{j=1}^d \frac{\partial f(x^i)}{\partial x_j} d^i_j
+~=~ \grad f(x^i)^\top d^i
+\end{eqnarray*}
+In practice, perfectly optimizing for $\alpha^i$ is too expensive and not useful 
+$\Rightarrow$ approximate the line search by a sufficient decrease condition:
+\begin{equation*}
+\text{find } \alpha^i \text{ such that } f(x^i + \alpha^i d^i) < f(x^i) + \delta \alpha^i \grad f(x^i)^\top d^i
+\end{equation*}
+where $\delta \in [0,1]$, i.e., achieve a $\delta$ proportion of the progress promised by order 1 Taylor expansion.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Approximate line search (2)} 
+Sufficient decrease condition rewritten with line search notation:
+\begin{equation*}
+\text{find } \alpha^i \text{ such that } f(\alpha^i) < f(x^i) + \delta \alpha^i \frac{d f(0)}{d \alpha}
+\end{equation*}
+\centering
+\includegraphics[width=0.7\textwidth]{line_search_backtrack-crop.pdf} 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Approximate line search (3)} 
+At iteration $i$:
+\begin{block}{Backtracking line search (Armijo)}
+\begin{algorithmic}
+\REQUIRE $d$ a descent direction, $x^i$, $\delta \in [0,1]$, $\rho \in ]0,1[$, $C>0$
+\STATE (defaults: $\delta=0.1,~\rho=0.5,~C=1$)
+\STATE initialize step size: $\alpha = \max(C \times \lVert \grad f(x^i) \rVert ~,~ \sqrt{d}/100) $ 
+\WHILE{$f(x^i + \alpha d^i) \ge f(x) + \delta \alpha \grad f(x^i)^\top d$}
+\STATE decrease step size: $\alpha \leftarrow \rho \times \alpha$
+\ENDWHILE 
+\RETURN $\alpha^i \leftarrow \alpha$
+\end{algorithmic}
+\end{block}
+Note: from now on, use line search, and the number of calls to $f$ is no longer equal to the iteration number since many function calls can be done during a line search within a single iteration.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Approximate line search (4)} 
+Look at what line search does to $f(x)=$ Rosenbrock where fixed step size diverged
+\begin{center}
+\begin{minipage}[b]{0.3\textwidth}
+\includegraphics[width=\textwidth]{gradient_rosen_LS_f-crop.pdf} 
+\end{minipage}
+\hspace{1.cm}
+\begin{minipage}[b]{0.3\textwidth}
+\includegraphics[width=\textwidth]{gradient_rosen_LS_x-crop.pdf} 
+\end{minipage}
+\end{center}
+Better, but not perfect: oscillations make progress very slow.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Gradient convergence speed} 
+$f(x) = \frac{1}{2} x^\top H x$ in $d=10$ dimensions, $H\ge 0$, not aligned with the axes, condition number = 10.
+\begin{center}
+\mbox{
+\begin{minipage}[c]{0.37\textwidth}
+\includegraphics[width=\textwidth,height=6cm]{gradient_quad_d10_cond10_LS-lin-crop.pdf} 
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[c]{0.57\textwidth}
+Empirically (for proofs and more info cf. \cite{ravikumar17}): on convex and differentiable functions, gradient search with line search progresses at a speed such that
+$f(x^t) \propto \xi \gamma^t$ where $\gamma \in [0,1[$. 
+Equivalently, to achieve $f(x^t) < \varepsilon$, $t>\mathcal O(\log(1/\varepsilon))$
+\vskip\baselineskip
+{\scriptsize
+$\log f(x^t) \propto t \log(\gamma) + \log(\xi) ~\Rightarrow~\log(\gamma)<0$ slope of the green curve.\\
+$\xi \gamma^t < \varepsilon \Leftrightarrow t > \frac{\log(\varepsilon) - \log(\xi)}{\log(\gamma)} = \frac{-1}{\log(\gamma)}\log(\xi/\varepsilon)$\\ $\Rightarrow~ t>\mathcal O(\log(1/\varepsilon))$ .
+}% end scriptsize
+\end{minipage}
+} % end mbox
+\end{center}
 \end{frame}
 
 
+%show that (with perfect line search) consecutive search directions are perpendicular: tendency to oscillate, sensitive to bad conditionning\\
+% linear convergence of steepest descent with perfect line search on convex differentiable functions
+%oscillations thus need better directions
+% approximate line search : backtracking
 
 
 \section{Improved gradient based searches}
@@ -500,14 +623,6 @@ oscillations thus need better directions
 \begin{frame}
 \frametitle{Nesterov accelerated gradient (NAG)} 
 \wip
-\end{frame}
-
-\subsection{Making it more global: restarts}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\frametitle{Restarted local searches} 
-\wip (make a simple flow chart)
 \end{frame}
 
 \subsection{A word on constraints}
@@ -537,10 +652,17 @@ oscillations thus need better directions
 \begin{frame}
 \frametitle{Comments on gradient based descent algorithms} 
 \wip
-comment on bound limits, handled with gradient projection\\
-show that (with perfect line search) consecutive search directions are perpendicular: tendency to oscillate, sensitive to bad conditionning\\
-other flaws: no convergence on nondifferentiable functions, gets trapped in local minima
+flaws: no convergence on nondifferentiable functions, gets trapped in local minima
 \end{frame}
+
+\subsection{Making it more global: restarts}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Restarted local searches} 
+\wip (make a simple flow chart)
+\end{frame}
+
 
 \section{Application neural network}
 
