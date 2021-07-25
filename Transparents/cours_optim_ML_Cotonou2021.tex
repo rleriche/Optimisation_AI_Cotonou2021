@@ -1,6 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% cours Intro à l'optimisation pour le machine learning
+% An introductory course for machine learning
+% (Rodolphe Le Riche)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -44,11 +45,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 \title
-[~Optimisation pour le machine learning
+[~Optimization for machine learning
 %\hspace{0.5cm}
 %\insertframenumber/\inserttotalframenumber
 ]
-{Introduction à l'optimisation pour le machine learning}
+{An introduction to optimization for machine learning}
 \author
 [Le Riche et al.]
 {\large Rodolphe Le Riche$^1$, Dédji Brian Whannou$^2$, Espéran Padonou$^3$} 
@@ -57,7 +58,7 @@ $^1$ CNRS LIMOS at Mines Saint-Etienne, France \\
 $^2$ KPMG France \\
 $^3$ Fondation Vallet
 } 
-\date[Juillet 2021]{Juillet 2021 \\
+\date[July 2021]{July 2021 \\
 Ecole d'Eté en Intelligence Artificielle \\
 fondation Vallet\\
 Cotonou, Bénin} 
@@ -66,51 +67,51 @@ Cotonou, Bénin}
 \end{frame}
 
 \section{Introduction}
-\subsection{Objectifs, remerciements}
+\subsection{Objectives, acknoledgements}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
-\frametitle{Plan du cours} 
+\frametitle{Course outline} 
 %\begin{multicols}{2}
-\begin{center} \textbf{Introduction à l'optimisation pour le machine learning} \end{center}
+\begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
 \tableofcontents[currentsection]
 %\end{multicols}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Objectifs du cours}
+\frametitle{Objectives of this course}
 \begin{itemize}
-\item Donner des bases pour l'optimisation numérique
-\item en faisant le lien avec le machine learning
-\item pour un public de bac+1
-\item avec quelques exemples de programmes en R/python codés à partir de 0.
-\item Limites: les algorithmes ne seront pas exactement ceux utilisés en pratique pour le deep learning, mais les principaux concepts y seront.
+\item Provides basic concepts for numerical optimization
+\item for an audience interested in machine learning
+\item with a background corresponding to 1 year after high school
+\item through examples coded in R/python from scratch.
+\item Limitation: the algorithms are not exactly those used in state-of-the-art deep learning, but the main concepts will be presented.
 \end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Bibliographie du cours}
+\frametitle{Bibliographical references for the class}
 {\small
-Ce cours doit beaucoup à
+This course is based on
 \begin{itemize}
-\item \cite{minoux2008programmation} : un classique sur l'optimisation, écrit avant l'avènement du machine learning mais une vraie base (niveau bac+3)
-\item \cite{ravikumar17} : présentation détaillée des algorithmes d'optimisation utiles en machine learning (niveau bac+3)
-\item \cite{bishop2006pattern} : un excellent livre d'introduction au machine learning avec quelques commentaires sur l'optimisation (niveau bac+3)
-\item \cite{schmidt2007fast} : techniques pour la régularisation L1 (article de recherche)
-\item \cite{sun2019optimization} : panorama des méthodes d'optimisation pour les réseaux de neurones, rétro-propagation de gradient (article de recherche)
+\item \cite{ravikumar17} : a detailed up-to-date presentation of the main convex optimization algorithms for machine learning (level end of undergraduate, bac +3)
+\item \cite{minoux2008programmation} : a classic textbook for optimization, written before the ML trend but still useful (level end of undergraduate / bac+3)
+\item \cite{bishop2006pattern} : a reference book for machine learning with some pages on optimization (level end of undergraduate / bac+3)
+\item \cite{schmidt2007fast} : L1 regularization techniques (research article)
+\item \cite{sun2019optimization} : review of optimization methods for tuning neural nets, gradient backpropagation (research article)
 \end{itemize}
-Nous en simplifierons le contenu et emprunterons des illustrations.
+The content of these references will be simplified for this class.
 } % end small font
 \end{frame}
 
-\subsection{Formulation d'un problème d'optimisation}
+\subsection{Optimization problem formulation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Optimisation = formalisation de la décision}
-L'optimisation est une\footnote{non unique, contestable par rapport à l'humain et la vie} formalisation mathématique de la décision
+\frametitle{Optimization = a quantitative formulation of decision}
+Optimization is a\footnote{non unique, incomplete when considering human beings or life} way of mathematically modeling decision.
 \vskip\baselineskip
 \mbox{
 \begin{minipage}[c]{0.3\textwidth}
@@ -121,9 +122,9 @@ L'optimisation est une\footnote{non unique, contestable par rapport à l'humain 
 \min_{x \in \mathcal S} f(x)
 \end{equation*}
 \begin{itemize}
-\item $x$ vecteur des paramètres de la décision~: dimensions, somme investie, réglage d'une machine/code, \ldots
-\item $f(x)$~: coût de la décision $x$
-\item $\mathcal S$~: ensemble des valeurs possibles de $x$, espace de recherche
+\item $x$ vector of decision parameters (variables)~: dimensions, investment, tuning of a machine / program, \ldots
+\item $f(x)$~: decision cost $x$
+\item $\mathcal S$~: set of possible values for $x$, search space
 \end{itemize}
 \end{minipage}
 } % end mbox
@@ -393,62 +394,96 @@ $\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i 
 \end{center}
 \end{frame}
 
-\section{Steepest descent}
+\section{Fixed step steepest descent algorithm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
-\frametitle{Plan du cours} 
+\frametitle{Course outline} 
 %\begin{multicols}{2}
 \begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
 \tableofcontents[currentsection]
 %\end{multicols}
 \end{frame}
 
-\subsection{Algorithm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Steepest descent algorithm} 
 \begin{equation*}
-\min_{x \in \mathcal S} f(x)
+\text{We look for }\quad  x^\star \in \arg\min_{x \in \mathcal S} f(x) \quad,\quad \mathcal S = \Rset[d]
 \end{equation*}
+\begin{itemize}
+\item Except for special cases (e.g., convex quadratic problems), the solution is not obtained analytically through the optimality conditions ($\grad f(x^\star) = 0$ + higher order conditions). 
+\item We typically use iterative algorithms: $x^{t+1}$ depends on previous iterates, $x^1,\ldots,x^t$ and their $f$'s.
+\item $t$ as a reference to computing time, because often calculating $f(x^t)$ takes more computation than the optimization algorithm itself.
+\item Qualities of an optimizer: robustness, speed of convergence. Often have to strike a compromise between them.
+\end{itemize}
+\end{frame}
 
+
+
+\section{Improved gradient based searches}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}%[allowframebreaks]
+\frametitle{Course outline} 
+%\begin{multicols}{2}
+\begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
+\tableofcontents[currentsection]
+%\end{multicols}
+\end{frame}
+
+\subsection{Line search}
+
+\subsection{Search directions for acceleration}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Gradient with momentum} 
 \wip
-present algo\\
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Comments on steepest descent} 
+\frametitle{Nesterov accelerated gradient (NAG)} 
+\wip
+\end{frame}
+
+\subsection{A word on constraints}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}%[allowframebreaks]
+\frametitle{Course outline} 
+%\begin{multicols}{2}
+\begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
+\tableofcontents[currentsection]
+%\end{multicols}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Bound constraints} 
+\wip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Constraints handling by penalization} 
+\wip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Comments on gradient based descent algorithms} 
 \wip
 comment on bound limits, handled with gradient projection\\
 show that (with perfect line search) consecutive search directions are perpendicular: tendency to oscillate, sensitive to bad conditionning\\
 other flaws: no convergence on nondifferentiable functions, gets trapped in local minima
 \end{frame}
 
-\subsection{Application neural network}
+\section{Application neural network}
 
-\section{Improved gradient searches}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}%[allowframebreaks]
-\frametitle{Plan du cours} 
-%\begin{multicols}{2}
-\begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
-\tableofcontents[currentsection]
-%\end{multicols}
-\end{frame}
-
-\section{Prise en compte des contraintes d'optimisation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}%[allowframebreaks]
-\frametitle{Plan du cours} 
-%\begin{multicols}{2}
-\begin{center} \textbf{Introduction à l'optimisation pour le machine learning} \end{center}
-\tableofcontents[currentsection]
-%\end{multicols}
-\end{frame}
-
-\section{Conclusions}
+\section*{Conclusions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
