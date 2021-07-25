@@ -319,7 +319,7 @@ By forward finite differences
 \end{equation*}
 {Proof: \scriptsize
  by Taylor,\\
-$f(x+he^i) = f(x) + h {e^i}^\top \grad f(x) + h^2/2 {e^i}^\top \hess f(x+\rho h e^i) e^i~,~\rho\in ]0,1[$ \\
+$f(x+he^i) = f(x) + h {e^i}^\top . \grad f(x) + h^2/2 {e^i}^\top \hess f(x+\rho h e^i) e^i~,~\rho\in ]0,1[$ \\
 $\grad f(x) = \frac{f(x+he^i)-f(x)}{h} - h/2 {e^i}^\top \hess f(x+\rho h e^i) e^i $ \\
 and make $h$ very small $\square$
 }
@@ -347,8 +347,8 @@ A search direction $d$ which makes an acute angle with $-\grad f(x)$ is a descen
 \\\vspace{0.8cm}
 {\normalsize
 Proof: by Taylor, $\forall \alpha \le 0,~\exists \epsilon \in [0,1]$ such that
-$f(x+\alpha d) = f(x) + \alpha d^\top \grad f(x) + \frac{\alpha^2}{2} d^\top \hess f(x + \alpha \epsilon d) d$\\
-$\lim_{\alpha \rightarrow 0^+} \frac{f(x+\alpha d) - f(x)}{\alpha} = d^\top \grad f(x) = - 1\times \lVert \grad f(x)\rVert \cos(d,-\grad f(x))$ \\
+$f(x+\alpha d) = f(x) + \alpha d^\top . \grad f(x) + \frac{\alpha^2}{2} d^\top \hess f(x + \alpha \epsilon d) d$\\
+$\lim_{\alpha \rightarrow 0^+} \frac{f(x+\alpha d) - f(x)}{\alpha} = d^\top . \grad f(x) = - 1\times \lVert \grad f(x)\rVert \cos(d,-\grad f(x))$ \\
 is negative if the cosine is positive $\square$
 } %end small
 \end{frame}
@@ -515,12 +515,12 @@ x &=& x^i + \alpha d^i \\
 f(\alpha) &=& f(x^i + \alpha d^i) \\
 \frac{df(0)}{d\alpha} &=& \sum_{j=1}^d \frac{\partial f(x^i)}{\partial x_j} \frac{\partial x_j}{\partial \alpha}
 ~=~\sum_{j=1}^d \frac{\partial f(x^i)}{\partial x_j} d^i_j
-~=~ \grad f(x^i)^\top d^i
+~=~ \grad f(x^i)^\top . d^i
 \end{eqnarray*}
 In practice, perfectly optimizing for $\alpha^i$ is too expensive and not useful 
 $\Rightarrow$ approximate the line search by a sufficient decrease condition:
 \begin{equation*}
-\text{find } \alpha^i \text{ such that } f(x^i + \alpha^i d^i) < f(x^i) + \delta \alpha^i \grad f(x^i)^\top d^i
+\text{find } \alpha^i \text{ such that } f(x^i + \alpha^i d^i) < f(x^i) + \delta \alpha^i \grad f(x^i)^\top . d^i
 \end{equation*}
 where $\delta \in [0,1]$, i.e., achieve a $\delta$ proportion of the progress promised by order 1 Taylor expansion.
 \end{frame}
@@ -545,7 +545,7 @@ At iteration $i$:
 \REQUIRE $d$ a descent direction, $x^i$, $\delta \in [0,1]$, $\rho \in ]0,1[$, $C>0$
 \STATE (defaults: $\delta=0.1,~\rho=0.5,~C=1$)
 \STATE initialize step size: $\alpha = \max(C \times \lVert \grad f(x^i) \rVert ~,~ \sqrt{d}/100) $ 
-\WHILE{$f(x^i + \alpha d^i) \ge f(x) + \delta \alpha \grad f(x^i)^\top d$}
+\WHILE{$f(x^i + \alpha d^i) \ge f(x) + \delta \alpha \grad f(x^i)^\top . d$}
 \STATE decrease step size: $\alpha \leftarrow \rho \times \alpha$
 \ENDWHILE 
 \RETURN $\alpha^i \leftarrow \alpha$
@@ -595,8 +595,28 @@ $\xi \gamma^t < \varepsilon \Leftrightarrow t > \frac{\log(\varepsilon) - \log(\
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Gradient descent oscillations} 
+Perfect line search solves
+\begin{equation*}
+\alpha^i = \arg\min_{\alpha>0} f(\alpha) ~\text{ where }~ f(\alpha) = f(x^i+\alpha d^i) 
+\end{equation*}
+Necessary conditions of optimal step size: 
+\begin{equation*}
+\frac{df(\alpha^i)}{d\alpha} = \sum_{j=1}^d \frac{\partial f(x^i + \alpha^i d^i)}{\partial x_j} \frac{\partial x_j}{\partial \alpha}
+= \grad f(x^{i+1})^\top . d^i = 0
+\end{equation*}
+If the direction is the gradient, 
+\begin{equation*}
+{-d^{i+1}}^\top . d^i = 0 ~\text{ i.e. } d^{i+1} \text{ and } d^i \text{ perpendicular}
+\end{equation*}
+\begin{center}
+\includegraphics[width=\textwidth]{oscillations-crop.pdf} 
+\end{center}
+\end{frame}
+
 %show that (with perfect line search) consecutive search directions are perpendicular: tendency to oscillate, sensitive to bad conditionning\\
-% linear convergence of steepest descent with perfect line search on convex differentiable functions
 %oscillations thus need better directions
 % approximate line search : backtracking
 
