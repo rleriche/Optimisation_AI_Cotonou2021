@@ -270,11 +270,11 @@ $f()$ = an error of the NN predictions (sum-of-squares error):
 \end{frame}
 
 
-\subsection{Optimization basics}
+\subsection{Basic mathematical concepts for optimization}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
-\frametitle{Optimization basics} 
+\frametitle{Basic mathematical concepts for optimization} 
 %\begin{multicols}{2}
 \tableofcontents[currentsection]
 %\end{multicols}
@@ -394,7 +394,7 @@ $\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i 
 \end{center}
 \end{frame}
 
-\section{Fixed step steepest descent algorithm}
+\section{Steepest descent algorithm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
@@ -408,7 +408,7 @@ $\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Steepest descent algorithm} 
+\frametitle{Optimizers as iterative algorithms} 
 \begin{equation*}
 \text{We look for }\quad  x^\star \in \arg\min_{x \in \mathcal S} f(x) \quad,\quad \mathcal S = \Rset[d]
 \end{equation*}
@@ -419,6 +419,62 @@ $\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i 
 \item Qualities of an optimizer: robustness, speed of convergence. Often have to strike a compromise between them.
 \end{itemize}
 \end{frame}
+
+\subsection{Fixed step steepest descent algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Fixed step steepest descent algorithm (1)} 
+Repeat steps along the steepest descent direction, $-\grad f(x^t)$. \\
+The size of the steps is proportional to the gradient norm.
+\begin{block}{}
+\begin{algorithmic}
+\REQUIRE $f()$, $\alpha \in ]0,1]$, $x^1$, $\epsilon^{\text{step}}$, $\epsilon^{\text{grad}}$, $t^{\text{max}}$
+\STATE $t\leftarrow 0$, $f^{\text{best so far}} \leftarrow $ \texttt{max\_double}
+\REPEAT 
+\STATE $t \leftarrow t+1$
+\STATE calculate $f(x^t)$ and $\grad f(x^t)$
+\IF{$f(x^t)< f^{\text{best so far}}$} 
+\STATE update $x^{\text{best so far}}$ and $f^{\text{best so far}}$ with current iterate
+\ENDIF
+\STATE \textbf{direction: } $d^t = - \grad f(x^t) / \lVert \grad f(x^t) \rVert$
+\STATE \textbf{step: } \textcolor{red}{$x^{t+1} ~=~ x^t + \alpha \lVert \grad f(x^t) \rVert d^t$}
+\UNTIL{ {$t>t^{\text{max}}$} \OR {$\lVert x^t - x^{t-1}\rVert \le \epsilon^{\text{step}}$} \OR {$\lVert \grad f(x^t)\rVert \le \epsilon^{\text{grad}}$} }
+\RETURN $x^{\text{best so far}}$ and $f^{\text{best so far}}$
+\end{algorithmic}
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Fixed step steepest descent algorithm (2)} 
+\begin{itemize}
+\item The choice of the step size factor $\alpha$ is critical : the steeper the function, the smaller $\alpha$. Default value = 0.1
+\item The true code (cf. project) is much longer and filled with instructions for reporting the points visited and doing plots afterwards.
+\end{itemize}
+\vspace{-0.5cm}
+\begin{center}
+{\scriptsize $f(x) = 1/2 x^\top H x$ , $H$ positive definite}\\
+\begin{minipage}[b]{0.3\textwidth}
+\includegraphics[width=\textwidth]{gradient_quad_2d_f_alpha01-crop.pdf} 
+\end{minipage}
+\hspace{1.5cm}
+\begin{minipage}[b]{0.3\textwidth}
+\includegraphics[width=\textwidth]{gradient_quad_2d_x_alpha01-crop.pdf} 
+\end{minipage}
+\end{center}
+\end{frame}
+
+\subsection{Line search}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Steepest descent with line search} 
+oscillations thus need better directions
+\wip
+\end{frame}
+
 
 
 
@@ -432,9 +488,6 @@ $\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i 
 \tableofcontents[currentsection]
 %\end{multicols}
 \end{frame}
-
-\subsection{Line search}
-
 \subsection{Search directions for acceleration}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -447,6 +500,14 @@ $\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i 
 \begin{frame}
 \frametitle{Nesterov accelerated gradient (NAG)} 
 \wip
+\end{frame}
+
+\subsection{Making it more global: restarts}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Restarted local searches} 
+\wip (make a simple flow chart)
 \end{frame}
 
 \subsection{A word on constraints}
