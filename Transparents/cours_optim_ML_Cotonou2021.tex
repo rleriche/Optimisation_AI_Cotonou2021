@@ -616,11 +616,6 @@ If the direction is the gradient,
 \end{center}
 \end{frame}
 
-%show that (with perfect line search) consecutive search directions are perpendicular: tendency to oscillate, sensitive to bad conditionning\\
-%oscillations thus need better directions
-% approximate line search : backtracking
-
-
 \section{Improved gradient based searches}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -631,11 +626,17 @@ If the direction is the gradient,
 \tableofcontents[currentsection]
 %\end{multicols}
 \end{frame}
+
 \subsection{Search directions for acceleration}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Gradient with momentum} 
+Recall fixed step gradient descent, 
+\begin{equation*} 
+x^{i+1} = x^i + \alpha s^i  \quad\text{ where }\quad s^i= -\grad f(x^i) 
+\end{equation*} 
+Introduce a momentum (i.e., a memory) in the search step,
 \wip
 \end{frame}
 
@@ -684,7 +685,7 @@ flaws: no convergence on nondifferentiable functions, gets trapped in local mini
 \end{frame}
 
 
-\section{Application neural network}
+\section{Application to neural network}
 
 \section*{Conclusions}
 
