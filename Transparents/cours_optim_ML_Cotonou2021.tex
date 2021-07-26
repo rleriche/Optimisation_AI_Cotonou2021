@@ -697,6 +697,35 @@ $s^i$ is no longer necessarily a descent direction.
 \end{minipage}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Comparison of methods (1)} 
+Rosenbrock, $d=2$: ability to handle curved ravines
+\begin{center}
+\includegraphics[width=0.4\textwidth]{rosen_comparison-crop.pdf} \\
+green=gradient, red=momentum, violet=NAG
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Comparison of methods (2)} 
+Test convergence speed on quadratic function, $d=10$, cond. nb. = 100.
+{\small green=gradient, red=momentum, violet=NAG}
+\\\vskip\baselineskip
+\begin{minipage}[c]{0.4\textwidth}
+\begin{center}
+\includegraphics[width=\textwidth]{quadratic_d10_cond100_comparison-crop.pdf} 
+\end{center}
+\end{minipage}
+\hspace{0.6cm}
+\begin{minipage}[c]{0.4\textwidth}
+In accordance with theory, convergence speed of NAG is better than momentum which is better than gradient.\\
+Note however the plateaus (or ``ripples'') typical of NAG and likely magnified by the finite difference
+approximation to the gradient.
+\end{minipage}
+\end{frame}
+
 % a word on convergence of momentum and nag: linear, just the constant changes, which is a lot
 % compare curves
 
