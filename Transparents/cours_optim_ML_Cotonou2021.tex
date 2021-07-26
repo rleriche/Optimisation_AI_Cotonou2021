@@ -781,12 +781,33 @@ Exercise: how to code this?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Constraints handling by penalizations (1)} 
-\wip
+\vspace{-0.5cm}
+\begin{equation*}
+\left\{
+\begin{array}{l}
+\min_{x \in \mathcal S \in \Rset[d]} f(x) \\
+\text{such that  } g(x) \le 0 
+\end{array}
+\right.
+\end{equation*}
+\hfill{\scriptsize (vector notation for the constraints)}\\
+We give two techniques to agregate $f$ and the $g_i$'s into a new objective function 
+(to minimize).
+\vskip\baselineskip
+\textbf{External penalty function}: penalize points that do not satisfy the constraints
+\begin{equation*}
+f_r(x) = f(x) + r \left[\max(0,g(x)) \right]^2 \quad,\quad r>0 
+\end{equation*}
+\vspace{-0.5cm}
+\begin{itemize}
+\item{Pros}: simple, $\grad f_r()$ continuous accross the constraint boundary (if $f$ and $g$ are)
+\item{Cons}: Convergence by the infeasible domain (hence external), need to find $r$ large enough to reduce infeasibility, but not too large because of numerical issue (high curvature accross constraint)
+\end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Constraints handling by penalizations (2)} 
+\frametitle{Constraints handling by penalizations (3)} 
 Example: $f(x)=(x-2)^2$, $g(x)=4-x\le 0$, $x^*=4$, convex problem
 \vskip\baselineskip
 \mbox{
