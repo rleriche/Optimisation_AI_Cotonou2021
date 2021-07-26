@@ -15,8 +15,8 @@ source('restarted_descent.R')
 ### problem definition
 # search space
 pbFormulation <- list()
-pbFormulation$fun<-quadratic #function to minimize, examples in test_functions.R
-d<-10
+pbFormulation$fun<-rosen #function to minimize, examples in test_functions.R
+d<-2
 pbFormulation$d<-d # dimension
 pbFormulation$LB<-rep(-5,d) #lower bounds
 pbFormulation$UB<-rep(5,d) #upper bounds
@@ -26,11 +26,11 @@ pbFormulation$UB<-rep(5,d) #upper bounds
 optAlgoParam <- list()
 optAlgoParam$xinit <- rep(4,d)#c(4.5,3.5) rep(-4.9,d) # initial point
 #
-optAlgoParam$budget <- 100
+optAlgoParam$budget <- 4000
 optAlgoParam$minGradNorm <- 1.e-6 
 optAlgoParam$minStepSize <- 1.e-11 
 #
-optAlgoParam$direction_type <- "gradient" # choices are : "gradient", "momentum", "NAG"
+optAlgoParam$direction_type <- "momentum" # choices are : "gradient", "momentum", "NAG"
 optAlgoParam$linesearch_type <- "armijo" # choices are: "none", "armijo"
 optAlgoParam$stepFactor <- 0.1 # step factor when there is no line search, 
 optAlgoParam$beta <- 0.9 # momentum term for direction_type == "momentum" or "NAG" 

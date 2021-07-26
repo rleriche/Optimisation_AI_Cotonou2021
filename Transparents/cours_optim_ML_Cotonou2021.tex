@@ -478,6 +478,7 @@ $\alpha=0.1$ on $f(x)=$ Rosenbrock (banana shaped) function in $d=2$ dimensions,
 \begin{minipage}[b]{0.3\textwidth}
 \includegraphics[width=\textwidth]{gradient_rosen_alpha0.1_x_diverges-crop.pdf} 
 \end{minipage}
+$x^\star = (1,1) ~,~ f(x^\star) = 0$
 \end{center}
 \end{frame}
 
@@ -631,7 +632,7 @@ If the direction is the gradient,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Gradient with momentum} 
+\frametitle{Gradient with momentum (1)} 
 Recall fixed step gradient descent, 
 \begin{equation*} 
 x^{i+1} = x^i + \alpha s^i  \quad\text{ where }\quad s^i= -\grad f(x^i) 
@@ -651,6 +652,29 @@ This should contribute to avoid the oscillations occuring at the botton of valle
 \includegraphics[width=0.9\textwidth]{momentum-crop.pdf} 
 \end{center}
 \end{minipage}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Gradient with momentum (2)} 
+Back to Rosenbrock, $d=2$, $x^\star = (1,1) ~,~ f(x^\star) = 0$,\\ 
+budget=4000, $x^1=(4,4)$
+\vspace{-0.3cm}
+\begin{center}
+\begin{minipage}[c]{0.35\textwidth}
+\begin{center}
+gradient\\
+\includegraphics[width=\textwidth]{gradient_rosen_LS_budg4000_x-crop.pdf} 
+\end{center}
+\end{minipage}
+\begin{minipage}[c]{0.35\textwidth}
+\begin{center}
+momentum\\
+\includegraphics[width=\textwidth]{momentum_rosen_LS_budg4000_x-crop.pdf} 
+\end{center}
+\end{minipage}
+\end{center}
+The momentum acceleration allows to find the solution.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -78,7 +78,7 @@
 #   but it would be correct for analytical gradients
 # * Delete the global variables if you change dimension and optimize quadratic function. 
 #   This is because the Hessian of the quadratic function depends on
-#   the global variable "glob_umat" and is not recalculated if glob_mat exists.
+#   the global variable "glob_umat" and is not recalculated if glob_umat exists.
 #############################################
 
 gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
