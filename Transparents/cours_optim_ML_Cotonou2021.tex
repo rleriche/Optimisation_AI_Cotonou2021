@@ -746,7 +746,7 @@ approximation to the gradient.
 \begin{equation*}
 \left\{
 \begin{array}{l}
-\min_{x \in \Rset[d]} f(x) \\
+\min_{x \in \mathcal S} f(x) \quad,\quad \mathcal S = \Rset[d]\\
 \text{such that  } g_i(x) \le 0 \quad , \quad i=1,m
 \end{array}
 \right.
@@ -756,11 +756,16 @@ approximation to the gradient.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Bound constraints} 
-$\mathcal S$ is an hypercube of $\Rset[d]$ described by the constraints
-\wip \\
+$\mathcal S$ is an hypercube of $\Rset[d]$, $\mathcal S = [LB,UB] \in \Rset[d]$.
+\vskip\baselineskip
+It could be described by constraints, 
+$g_{2i-1}(x) \coloneqq LB_i - x_i \le 0$,
+$g_{2i}(x) \coloneqq x_i - UB_i \le 0$, $i=1,\ldots,d$
+but these constraints are so simple that they directly handled by projection.\\
 \mbox{
 \begin{minipage}[c]{0.4\textwidth}
-If $x^i$ is at a bound and the search direction $d^i$ takes it outside $\mathcal S = [LB,UB]$, 
+If $x^i$ is at a bound and the search direction $d^i$ takes it outside$^a$
+$\mathcal S = [LB,UB]$, 
 project the search direction vector onto the active bound.\\
 Exercise: how to code this?
 \end{minipage}
@@ -769,6 +774,8 @@ Exercise: how to code this?
 \includegraphics[width=\textwidth]{proj_bound-crop.pdf}
 \end{minipage}
 }
+\\
+{$^a$\small This can even happen for a convex function in a convex $\mathcal S$, as the drawing shows.} 
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
