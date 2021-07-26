@@ -1,0 +1,59 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Enonce de projet, Cotonou Juillet 2021
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+%\usepackage{beamerthemesplit}
+%\usepackage{beamerthemeshadow} 
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{xspace}
+\usepackage{xifthen}
+\usepackage{multicol}
+\usepackage{mathtools}
+\usepackage{algorithm,algorithmic}
+\usepackage{dsfont}
+%
+% these 2 next needed for mathbb greek letters
+\usepackage{breqn} 
+\usepackage[bbgreekl]{mathbbol}
+%
+\usepackage{bbm} % this one is needed for the indicator
+%
+
+% custom commands in sty file, for easier writting and change of notations
+\usepackage{my_notations}
+
+\title{Enoncé du projet pour le cours d'optimisation}
+\date{Juillet 2021 \\
+Ecole d'Eté en Intelligence Artificielle \\
+fondation Vallet\\
+Cotonou, Bénin}
+\author{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+
+\section{Prise en main du code}
+Aller dans le répertoire \texttt{Project}. 
+\begin{enumerate}
+\item Ouvrir \texttt{3Dplots}. C'est un fichier pour dessiner des fonctions en \texttt{d<-2} dimensions (``contour plots'' et ``plot 3D''). 
+Dessiner plusieurs des fonctions données dans \texttt{test\_functions}\footnote{Les fonctions de \texttt{test\_functions} marchent avec des dimensions arbitraires}.
+Il suffit de changer le champ \texttt{fun<-} et mettre le nom de la fonction à dessiner
+(par exemple \texttt{fun<-quadratic} ou \texttt{fun<-rosen} ou \texttt{fun<-ackley}, \ldots). \\
+Repérer quelles fonctions sont multimodales (i.e., ont plusieurs optima locaux différents).
+\item Ouvrir \texttt{mainOptim}. Il s'agit du programme principal qui permet de 
+\end{enumerate}
+\section{Création d'une nouvelle fonction}
+\section{Ajout de restart à une méthode de descente}
+
+\end{document}
