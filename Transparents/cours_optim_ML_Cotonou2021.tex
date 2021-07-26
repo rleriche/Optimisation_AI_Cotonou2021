@@ -729,7 +729,7 @@ approximation to the gradient.
 % a word on convergence of momentum and nag: linear, just the constant changes, which is a lot
 % compare curves
 
-\subsection{A word on constraints}
+\subsection{A word about constraints}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
@@ -742,8 +742,33 @@ approximation to the gradient.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
+\frametitle{A word about constraints} 
+\begin{equation*}
+\left\{
+\begin{array}{l}
+\min_{x \in \Rset[d]} f(x) \\
+\text{such that  } g_i(x) \le 0 \quad , \quad i=1,m
+\end{array}
+\right.
+\end{equation*}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
 \frametitle{Bound constraints} 
-\wip
+$\mathcal S$ is an hypercube of $\Rset[d]$ described by the constraints
+\wip \\
+\mbox{
+\begin{minipage}[c]{0.4\textwidth}
+If $x^i$ is at a bound and the search direction $d^i$ takes it outside $\mathcal S = [LB,UB]$, 
+project the search direction vector onto the active bound.\\
+Exercise: how to code this?
+\end{minipage}
+\hspace{0.7cm}
+\begin{minipage}[c]{0.4\textwidth}
+\includegraphics[width=\textwidth]{proj_bound-crop.pdf}
+\end{minipage}
+}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -755,8 +780,15 @@ approximation to the gradient.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Comments on gradient based descent algorithms} 
-\wip
-flaws: no convergence on nondifferentiable functions, gets trapped in local minima
+\begin{minipage}[c]{0.5\textwidth}
+Use on nondifferentiable functions: theoretically may converge at a point which is not a minimum even on convex functions (e.g., if an iterate is at a kink). This rarely happens in practice. 
+Try function $f(x) = \sum_{i=1}^d \lvert x_i \rvert$ (``L1norm'') with the code. 
+\end{minipage}
+\begin{minipage}[c]{0.4\textwidth}
+\includegraphics[width=\textwidth]{L1norm_contour-premconv-crop.pdf} 
+\end{minipage}
+\\
+Main flaw: gets trapped in local minima.
 \end{frame}
 
 \subsection{Making it more global: restarts}
