@@ -807,6 +807,24 @@ f_r(x) = f(x) + r \left[\max(0,g(x)) \right]^2 \quad,\quad r>0
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
+\frametitle{Constraints handling by penalizations (2)} 
+\textbf{Lagrangian}: for problems without duality gap\footnote{cf. duality, out of scope for this course}, e.g., convex problems, there exists Lagrange multipliers $\lambda^\star$ such that 
+\begin{equation*}
+\begin{split}
+& x^\star \in \arg \min_{x \in \mathcal S} L(x;\lambda^\star) \\
+&\text{where } L(x;\lambda^\star) \coloneqq f(x) + \lambda^\star g(x)
+\end{split}
+\end{equation*}
+The Lagrangian $L(;\lambda^\star)$ is (when no duality gap) a valid penalty function.
+\begin{itemize}
+\item{Pros}: duality provides a way to calculate $\lambda^\star$.
+\item{Cons}: estimating $\lambda^\star$ has a numerical cost. 
+For most problems with local optima there is a duality gap $\Rightarrow$ rely on augmented Lagrangians$^4$.
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
 \frametitle{Constraints handling by penalizations (3)} 
 Example: $f(x)=(x-2)^2$, $g(x)=4-x\le 0$, $x^*=4$, convex problem
 \vskip\baselineskip
@@ -816,7 +834,7 @@ Example: $f(x)=(x-2)^2$, $g(x)=4-x\le 0$, $x^*=4$, convex problem
 \end{minipage}
 \hspace{0.5cm}
 \begin{minipage}[c]{0.6\textwidth}
-$f$ and $g$ in black, $L(x)=f(x)+\lambda^\star g(x)$ with $\lambda^\star=4$ in red, 
+$f$ and $g$ in black, $L(x;\lambda^\star=4)$ in red, 
 exterior penalty $f_r()$ with $r=1$ and 10 in light and dark green, respectively.
 \vskip\baselineskip
 The Lagrangian is a valid penalty here. 
@@ -845,7 +863,13 @@ Main flaw: gets trapped in local minima.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Restarted local searches} 
-\wip (make a simple flow chart)
+\vfill
+\begin{center}
+\begin{minipage}[c]{0.4\textwidth}
+\textbf{treated as a project question}
+\end{minipage}
+\end{center}
+\vfill
 \end{frame}
 
 
