@@ -780,8 +780,29 @@ Exercise: how to code this?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Constraints handling by penalization} 
+\frametitle{Constraints handling by penalizations (1)} 
 \wip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Constraints handling by penalizations (2)} 
+Example: $f(x)=(x-2)^2$, $g(x)=4-x\le 0$, $x^*=4$, convex problem
+\vskip\baselineskip
+\mbox{
+\begin{minipage}[c]{0.35\textwidth}
+\includegraphics[width=\textwidth]{constraints_methods_annoted-crop.pdf}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[c]{0.6\textwidth}
+$f$ and $g$ in black, $L(x)=f(x)+\lambda^\star g(x)$ with $\lambda^\star=4$ in red, 
+exterior penalty $f_r()$ with $r=1$ and 10 in light and dark green, respectively.
+\vskip\baselineskip
+The Lagrangian is a valid penalty here. 
+\vskip\baselineskip
+As $r$ grows, $x_r^\star \rightarrow x^\star$ but the curvature of $f_r()$ increases.
+\end{minipage}
+}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
