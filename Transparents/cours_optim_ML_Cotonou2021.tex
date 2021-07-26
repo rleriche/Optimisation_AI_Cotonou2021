@@ -636,12 +636,21 @@ Recall fixed step gradient descent,
 \begin{equation*} 
 x^{i+1} = x^i + \alpha s^i  \quad\text{ where }\quad s^i= -\grad f(x^i) 
 \end{equation*} 
+$s^i$, the step, corrected by a fixed or optimized (line search) $\alpha$.
 Introduce a momentum (i.e., a memory) in the search step,
 \begin{equation*} 
 s^i = -\grad f(x^i) + \beta s^{i-1}
 \end{equation*} 
-where\footnote{alternatively, for iteration varying momentum, $\beta^i=(i-2)/(i+1)$} $\beta = 0.9$
-\wip
+where\footnote{alternatively, for iteration varying momentum, $\beta^i=(i-2)/(i+1)$} $\beta = 0.9$.\\
+\vspace{-0.8cm}
+\begin{minipage}[c]{0.5\textwidth}
+This should contribute to avoid the oscillations occuring at the botton of valleys:
+\end{minipage}
+\begin{minipage}[c]{0.4\textwidth}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{momentum-crop.pdf} 
+\end{center}
+\end{minipage}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
