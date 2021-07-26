@@ -425,7 +425,7 @@ $\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Fixed step steepest descent algorithm (1)} 
-Repeat steps along the steepest descent direction, $-\grad f(x^t)$. \\
+Repeat steps along the steepest descent direction, $-\grad f(x^t)$ \cite{cauchy1847methode}. \\
 The size of the steps is proportional to the gradient norm.
 \begin{block}{}
 \begin{algorithmic}
@@ -638,14 +638,15 @@ Recall fixed step gradient descent,
 x^{i+1} = x^i + \alpha s^i  \quad\text{ where }\quad s^i= -\grad f(x^i) 
 \end{equation*} 
 $s^i$, the step, corrected by a fixed or optimized (line search) $\alpha$.
-Introduce a momentum (i.e., a memory) in the search step,
+Introduce a momentum (i.e., a memory) in the search step \cite{polyak1964some},
 \begin{equation*} 
 s^i = -\grad f(x^i) + \beta s^{i-1}
 \end{equation*} 
 where\footnote{alternatively, for iteration varying momentum, $\beta^i=(i-2)/(i+1)$} $\beta = 0.9$.\\
 \vspace{-0.8cm}
 \begin{minipage}[c]{0.5\textwidth}
-This should contribute to avoid the oscillations occuring at the botton of valleys:
+This should contribute to avoid the oscillations occuring at the botton of valleys.\\
+$s^i$ still a descent direction.
 \end{minipage}
 \begin{minipage}[c]{0.4\textwidth}
 \begin{center}
@@ -680,8 +681,24 @@ The momentum acceleration allows to find the solution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Nesterov accelerated gradient (NAG)} 
-\wip
+Same idea as the momentum direction, but anticipate the position of the next point in the gradient calculation
+\cite{nesterov1983method}:
+\begin{equation*} 
+s^i = -\grad f(x^i+\beta (x^i-x^{i-1})) + \beta s^{i-1}
+\end{equation*} 
+\begin{minipage}[c]{0.5\textwidth}
+On the sketch, $\grad f$ turns upwards and the step is adjusted accordingly.\\
+$s^i$ is no longer necessarily a descent direction.
+\end{minipage}
+\begin{minipage}[c]{0.4\textwidth}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{nag-crop.pdf} 
+\end{center}
+\end{minipage}
 \end{frame}
+
+% a word on convergence of momentum and nag: linear, just the constant changes, which is a lot
+% compare curves
 
 \subsection{A word on constraints}
 
