@@ -64,7 +64,8 @@ c'est la fonction la plus simple qui possède un minimum, et on peut considérer
 Ici ce sont les paramètres des variantes de la méthode de descente vues en cours: des critères d'arrêt (champs \texttt{budget}, \texttt{minGradNorm}, \texttt{minStepSize} ), l'activation de la recherche en ligne (\texttt{linesearch\_type <- "armijo"}) ou non (\texttt{linesearch\_type <- "none"}), la méthode d'estimation de la direction de recherche (\texttt{direction\_type <- "gradient"} ou \texttt{"momentum"} ou \texttt{"NAG"}), le facteur de taille de pas quand la recherche en ligne n'est pas active (\texttt{stepFactor}), \ldots
 \end{itemize}
 \begin{enumerate}
-\item Avec la fonction \texttt{quadratic} et un point initial pas trop proche de l'optimum \texttt{glob\_xstar}, observer l'effet de \texttt{stepFactor} sur les itérations quand il n'y a pas de recherche en ligne (\texttt{linesearch\_type <- "none"}).
+\item Avec la fonction \texttt{quadratic} et un point initial pas trop proche de l'optimum \texttt{glob\_xstar}, observer l'effet de \texttt{stepFactor} sur les itérations quand il n'y a pas de recherche en ligne (\texttt{linesearch\_type <- "none"}). Remarquer qu'en partant du même point avec la recherche en ligne (\texttt{linesearch\_type <- "armijo"}), la convergence a lieu, au prix de quelques évaluations supplémentaires à chaque itération.
+\item  La fonction Rastrigin est multimodale. Sur la fonction \texttt{"rastrigin"} en \texttt{d<-2} dimensions, observer des convergences locales, i.e., des points de convergence qui sont des optima locaux mais pas globaux. Pour être sûr de bien observer le phénomène, il faut laisser l'optimiseur converger suffisamment longtemps, typiquement \texttt{budget<-10000} et le critère d'arrêt est autre que le budget.
 \end{enumerate}
 
 
@@ -75,7 +76,7 @@ Ici ce sont les paramètres des variantes de la méthode de descente vues en cou
 
 \appendix
 
-\section{Réponses}
+\section{Réponses et commentaires supplémentaires}
 
 \noindent 1.(a).\\ 
 Unimodales: \texttt{sphere,quadratic,rosen,L1norm,tunnel}. AN: \texttt{sphere,quadratic,L1norm} sont convexes, pas les autres. \texttt{L1norm} est non différentiable.\\
@@ -84,5 +85,15 @@ Multimodales: \texttt{ackley,rastrigin,schwefel,michalewicz,quad\_wave}
 \vskip\baselineskip
 \noindent 1.(b).\\ 
 Quand on augmente le conditionnement, la fonction \texttt{quadratic} ressemble de plus en plus à une vallée profonde, néanmoins rectiligne, contrairement à \texttt{rosen}.
+
+\vskip\baselineskip
+\noindent 2.(a). Le conditionnement de la fonction quadratique a un role, plus il est grand, plus \texttt{stepFactor} doit être petit. 
+Si \texttt{stepFactor} est trop grand, la méthode diverge, en d'autres termes elle sort des bornes de $\mathcal{S}$. 
+Vice versa, un petit \texttt{stepFactor} permet la convergence, mais à une vitesse inférieure (petits pas).
+Exemple de valeurs: \texttt{xinit<-c(-4.9,-4.9)}, \texttt{cond.no<-3}, \texttt{stepFactor <- 0.01,0.1,0.9}.\\ 
+
+\vskip\baselineskip
+\noindent 2.(b). Pour trouver plus facilement des points initiaux menant à une convergence locale, générer le point initial au hasard avec
+\texttt{optAlgoParam{\$}xinit <- runif(n = d,min = pbFormulation{\$}LB,max = pbFormulation{\$}UB)}
 
 \end{document}
