@@ -114,7 +114,7 @@ quad_wave <- function(xx){
 }
 
 
-##### function with hierarchical sensitivities and local optima #########
+##### non differentiable and convex L1 norm #########
 L1norm <- function(xx){
      y <- sum(abs(xx))
   return(y)

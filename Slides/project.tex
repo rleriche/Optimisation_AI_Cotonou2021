@@ -43,17 +43,46 @@ Cotonou, Bénin}
 \begin{document}
 \maketitle
 
-\section{Prise en main du code}
+\section{Prise en main du code, intuition sur les fonctions}
 Aller dans le répertoire \texttt{Project}. 
 \begin{enumerate}
+
 \item Ouvrir \texttt{3Dplots}. C'est un fichier pour dessiner des fonctions en \texttt{d<-2} dimensions (``contour plots'' et ``plot 3D''). 
 Dessiner plusieurs des fonctions données dans \texttt{test\_functions}\footnote{Les fonctions de \texttt{test\_functions} marchent avec des dimensions arbitraires}.
 Il suffit de changer le champ \texttt{fun<-} et mettre le nom de la fonction à dessiner
 (par exemple \texttt{fun<-quadratic} ou \texttt{fun<-rosen} ou \texttt{fun<-ackley}, \ldots). \\
-Repérer quelles fonctions sont multimodales (i.e., ont plusieurs optima locaux différents).
+\begin{enumerate}
+\item Repérer quelles fonctions sont multimodales (i.e., ont plusieurs optima locaux différents).
+\item Changer la position de l'optimum \texttt{glob\_xstar} et le conditionnement \texttt{cond.no} de la fonction \texttt{quadratic}. Regarder l'effet sur les dessins. La fonction \texttt{quadratic} est une fonction test fondamentale pour le développement théorique et pratique des optimiseurs: 
+c'est la fonction la plus simple qui possède un minimum, et on peut considérer que localement autour des optima locaux toutes les fonctions sont quadratiques (d'après le développement de Taylor à l'ordre 2).
+\end{enumerate}
+
 \item Ouvrir \texttt{mainOptim}. Il s'agit du programme principal qui permet de 
+\begin{itemize}
+\item formuler le problème (liste \texttt{PbFormulation}): choisir une fonction (champ \texttt{fun}), son nombre de dimensions (champ \texttt{d}), ses bornes (champs \texttt{LB,UB})
+\item choisir les paramètres de l'algorithme d'optimisation (liste \texttt{optAlgoParam}).
+Ici ce sont les paramètres des variantes de la méthode de descente vues en cours: des critères d'arrêt (champs \texttt{budget}, \texttt{minGradNorm}, \texttt{minStepSize} ), l'activation de la recherche en ligne (\texttt{linesearch\_type <- "armijo"}) ou non (\texttt{linesearch\_type <- "none"}), la méthode d'estimation de la direction de recherche (\texttt{direction\_type <- "gradient"} ou \texttt{"momentum"} ou \texttt{"NAG"}), le facteur de taille de pas quand la recherche en ligne n'est pas active (\texttt{stepFactor}), \ldots
+\end{itemize}
+\begin{enumerate}
+\item Avec la fonction \texttt{quadratic} et un point initial pas trop proche de l'optimum \texttt{glob\_xstar}, observer l'effet de \texttt{stepFactor} sur les itérations quand il n'y a pas de recherche en ligne (\texttt{linesearch\_type <- "none"}).
+\end{enumerate}
+
+
+
 \end{enumerate}
 \section{Création d'une nouvelle fonction}
 \section{Ajout de restart à une méthode de descente}
+
+\appendix
+
+\section{Réponses}
+
+\noindent 1.(a).\\ 
+Unimodales: \texttt{sphere,quadratic,rosen,L1norm,tunnel}. AN: \texttt{sphere,quadratic,L1norm} sont convexes, pas les autres. \texttt{L1norm} est non différentiable.\\
+Multimodales: \texttt{ackley,rastrigin,schwefel,michalewicz,quad\_wave}
+
+\vskip\baselineskip
+\noindent 1.(b).\\ 
+Quand on augmente le conditionnement, la fonction \texttt{quadratic} ressemble de plus en plus à une vallée profonde, néanmoins rectiligne, contrairement à \texttt{rosen}.
 
 \end{document}
