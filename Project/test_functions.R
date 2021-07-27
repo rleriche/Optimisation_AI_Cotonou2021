@@ -34,19 +34,18 @@ schwefel <- function(xx){
   return(y)
 }
 
-## Sphere function. Global Minimum at glob_xstar
+## Sphere function. Minimum at xstar
 sphere <- function(xx){
-  glob_xstar <- rep(0,length(xx))
-  xx <- xx - glob_xstar
-  #aa <- 1.024*xx
-  aa <- xx
-  d <- length(aa)
-  sum <- sum(aa*aa)
-  y <- sum
+  d <- length(xx)
+  # xstar <- rep(2,d)
+  # xstar[1]<-4.5
+  xstar<-1:d
+  aa <- xx - xstar
+  y <- sum(aa*aa)
   return(y)
 }
 
-##### michalewicz function #########
+##### Michalewicz function #########
 #glob min in 2D: -1.83, 5D: -4.71 , 10D: -9.64
 michalewicz <- function(xx, m=10){
   aa <- 0.1*pi*(xx + 5)
@@ -138,3 +137,10 @@ rosen <- function(xx)
   y <- sum(100*(xnext-xi^2)^2 + (xi-1)^2)
   return(y)
 }
+
+# L1 regularization of sphere
+sphereL1 <- function(xx){
+  lambda<-5
+  y<-sphere(xx)+lambda*L1norm(xx) 
+  return(y)
+} 

@@ -15,8 +15,8 @@ source('restarted_descent.R')
 ### problem definition
 # search space
 pbFormulation <- list()
-pbFormulation$fun<-rastrigin #function to minimize, examples in test_functions.R
-d<-2
+pbFormulation$fun<-sphere #function to minimize, examples in test_functions.R
+d<-10
 pbFormulation$d<-d # dimension
 pbFormulation$LB<-rep(-5,d) #lower bounds
 pbFormulation$UB<-rep(5,d) #upper bounds

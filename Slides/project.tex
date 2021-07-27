@@ -43,7 +43,7 @@ Cotonou, Bénin}
 \begin{document}
 \maketitle
 
-\section{Prise en main du code, intuition sur les fonctions}
+\section*{Prise en main du code, intuition sur les fonctions}
 Aller dans le répertoire \texttt{Project}. 
 \begin{enumerate}
 
@@ -68,15 +68,35 @@ Ici ce sont les paramètres des variantes de la méthode de descente vues en cou
 \item  La fonction Rastrigin est multimodale. Sur la fonction \texttt{"rastrigin"} en \texttt{d<-2} dimensions, observer des convergences locales, i.e., des points de convergence qui sont des optima locaux mais pas globaux. Pour être sûr de bien observer le phénomène, il faut laisser l'optimiseur converger suffisamment longtemps, typiquement \texttt{budget<-10000} et le critère d'arrêt est autre que le budget.
 \end{enumerate}
 
-
-
 \end{enumerate}
-\section{Création d'une nouvelle fonction}
-\section{Ajout de restart à une méthode de descente}
+
+\section*{Etude d'une fonction de type apprentissage supervisé}
+On se propose de créer une nouvelle fonction qui a un rapport étroit avec des applications en machine learning:
+\begin{equation}
+f(x) ~=~ \sum_{i=1}^d (x_i-c_i)^2 + \lambda \sum_{i=1}^d \lvert x_i \rvert \quad,\quad \lambda \ge 0
+\label{eq:sphereL1}
+\end{equation}
+Le premier terme correspond à une parabole sphérique centrée en $c$ (fonction \texttt{sphere}). 
+Le second terme est la norme L1 (\texttt{L1norm}) multipliée par le coefficient $\lambda$.\\
+Analogie avec le machine learning: $x$ sont les poids du réseau; 
+la fonction sphère est un modèle (simpliste) de l'erreur quadratique moyenne d'un réseau de neurones, erreur qui serait minimisée en $c$; 
+Pour fixer les idées, faisons l'hypothèse que $c_i = i~,~i=1,\ldots,d$, ainsi les $c_i$ ont des valeurs différentes (accessoirement croissantes).
+$\lambda \lVert x \rVert_1$ est le terme de régularisation, qui aide à avoir une bonne capacité de généralisation du réseau. 
+Nous nous proposons d'explorer pourquoi.
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item Programmer la fonction de l'équation~(\ref{eq:sphereL1}) à la façon des autres fonctions du fichier \texttt{test_functions}.
+\item La minimiser en dimension $d<-10$ avec, par défaut, la descente \texttt{"momentum"} complétée par la recherche en ligne \texttt{"armijo"}. 
+Essayez plusieurs valeurs de $\lambda \ge 0$.
+Que remarquez vous sur les $x^\star$ proposés? En quoi cela peut il expliquer une meilleure capacité de généralisation du réseau de neurones?
+\end{enumerate}
+
+
+\section*{Ajout de restart à une méthode de descente}
 
 \appendix
 
-\section{Réponses et commentaires supplémentaires}
+\section*{Réponses et commentaires supplémentaires}
 
 \noindent 1.(a).\\ 
 Unimodales: \texttt{sphere,quadratic,rosen,L1norm,tunnel}. AN: \texttt{sphere,quadratic,L1norm} sont convexes, pas les autres. \texttt{L1norm} est non différentiable.\\
@@ -95,5 +115,47 @@ Exemple de valeurs: \texttt{xinit<-c(-4.9,-4.9)}, \texttt{cond.no<-3}, \texttt{s
 \vskip\baselineskip
 \noindent 2.(b). Pour trouver plus facilement des points initiaux menant à une convergence locale, générer le point initial au hasard avec
 \texttt{optAlgoParam{\$}xinit <- runif(n = d,min = pbFormulation{\$}LB,max = pbFormulation{\$}UB)}
+
+\vskip\baselineskip
+\noindent 3.
+\begin{center}
+\begin{minipage}[b]{0.6\textwidth}
+\texttt{
+sphereL1 <- function(xx)\{ \\
+\mbox{\quad}   lambda<-5 \\
+\mbox{\quad}  y<-sphere(xx)+lambda*L1norm(xx) \\
+\mbox{\quad}  return(y) \\
+\}
+} % end texttt
+\end{minipage}
+\end{center}
+
+\vskip\baselineskip
+\noindent 4. Plus $\lambda$ est grand, plus $x^\star$ s'éloigne de $c$ et tend vers 0 mais d'une façon non rectiligne: certaines composantes 
+de $x^\star$, en l'occurence celles associées aux composantes basses de $c$, sont mises à 0.\\
+Ceci peut être compris en remarquant le lien entre le problème~(\ref{eq:sphereL1}) et l'optimisation avec contraintes.
+Le problème 
+\begin{equation*}
+\left\{
+\begin{array}{l}
+\min_x f(x) = \lVert x - c \rVert^2 \\
+\text{tel que }~~ g(x) = \lVert x \rVert_1 - \beta \le 0 \quad,\quad \beta>0
+\end{array}
+\right.
+\end{equation*}
+a pour Lagrangien à minimiser sur $x$
+\begin{equation*}
+\min_x f(x) + \lambda^\star g(x) = \lVert x - c \rVert^2 + \lambda^\star \lVert x \rVert_1 - \lambda^\star\beta
+\end{equation*}
+Le dernier terme ne dépend pas de $x$, et les deux précédents sont précisément la fonction régularisée~(\ref{eq:sphereL1}).
+Le dessin ci-dessous représente la fonction sphère et la limite de la contrainte sur $\lVert x \rVert_1$. On voit que la solution tend à 
+se trouver sur un sommet du domaine faisable. Or, en ces sommets, des composantes de $x$ s'annulent. Notons que ce phénomène se produit de plus 
+en plus quand on monte en dimensions et est moins frappant quand $d=2$.
+\begin{center}
+ \includegraphics[width=0.5\textwidth]{l1sphere_regularization-crop.pdf}
+\end{center}
+
+Analogie machine learning: si les composantes de $x$ sont des poids de réseau de neurone, cela veut dire que certains liens dans le réseau de neurone sont supprimés.
+Ainsi le réseau a une plus faible capacité à surapprendre les données, il généralise mieux. Tout l'art est de trouver la bonne valeur de $\lambda$.
 
 \end{document}
