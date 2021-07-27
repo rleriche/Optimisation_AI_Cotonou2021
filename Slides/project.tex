@@ -61,7 +61,7 @@ c'est la fonction la plus simple qui possède un minimum, et on peut considérer
 \begin{itemize}
 \item formuler le problème (liste \texttt{PbFormulation}): choisir une fonction (champ \texttt{fun}), son nombre de dimensions (champ \texttt{d}), ses bornes (champs \texttt{LB,UB})
 \item choisir les paramètres de l'algorithme d'optimisation (liste \texttt{optAlgoParam}).
-Ici ce sont les paramètres des variantes de la méthode de descente vues en cours: des critères d'arrêt (champs \texttt{budget}, \texttt{minGradNorm}, \texttt{minStepSize} ), l'activation de la recherche en ligne (\texttt{linesearch\_type <- "armijo"}) ou non (\texttt{linesearch\_type <- "none"}), la méthode d'estimation de la direction de recherche (\texttt{direction\_type <- "gradient"} ou \texttt{"momentum"} ou \texttt{"NAG"}), le facteur de taille de pas quand la recherche en ligne n'est pas active (\texttt{stepFactor}), \ldots
+Ici ce sont les paramètres des variantes de la méthode de descente vues en cours: des critères d'arrêt (champs \texttt{budget}, \texttt{minGradNorm}, \texttt{minStepSize} ), l'activation de la recherche en ligne (\texttt{linesearch\_type <- "armijo"}) ou non (\texttt{linesearch\_type <- "none"}), la méthode d'estimation de la direction de recherche (\texttt{direction\_type <- "gradient"} ou \texttt{"momentum"} ou \texttt{"NAG"}), le facteur de taille de pas quand la recherche en ligne n'est pas active (\texttt{stepFactor}), le coefficient de mémoire \texttt{beta} des accélérations de gradient, \ldots
 \end{itemize}
 \begin{enumerate}
 \item Avec la fonction \texttt{quadratic} et un point initial pas trop proche de l'optimum \texttt{glob\_xstar}, observer l'effet de \texttt{stepFactor} sur les itérations quand il n'y a pas de recherche en ligne (\texttt{linesearch\_type <- "none"}). Remarquer qu'en partant du même point avec la recherche en ligne (\texttt{linesearch\_type <- "armijo"}), la convergence a lieu, au prix de quelques évaluations supplémentaires à chaque itération.
@@ -92,10 +92,17 @@ Que remarquez vous sur les $x^\star$ proposés? En quoi cela peut il expliquer u
 \end{enumerate}
 
 
-\section*{Ajout de restart à une méthode de descente}
+\section*{Rendre une méthode de descente un peu plus globale: redémarrages}
+Nous avons vu en cours et avec la question 4.(b) que les méthodes de descentes convergent localement, ce qui peut être
+un inconvénient dans les problèmes où il y a plusieurs solutions.\\
+Une façon simple de remédier partiellement à ce problème est de redémarrer des descentes depuis des points différents.
+\begin{enumerate}
+\setcounter{enumi}{4}
+\item Proposer un algorithme et le programmer qui réalise des redémarrages aléatoires de d'optimisation par descente.
+\end{enumerate}
 
 \appendix
-
+\newpage
 \section*{Réponses et commentaires supplémentaires}
 
 \noindent 1.(a).\\ 
@@ -139,13 +146,13 @@ Le problème
 \left\{
 \begin{array}{l}
 \min_x f(x) = \lVert x - c \rVert^2 \\
-\text{tel que }~~ g(x) = \lVert x \rVert_1 - \beta \le 0 \quad,\quad \beta>0
+\text{tel que }~~ g(x) = \lVert x \rVert_1 - \tau \le 0 \quad,\quad \tau>0
 \end{array}
 \right.
 \end{equation*}
 a pour Lagrangien à minimiser sur $x$
 \begin{equation*}
-\min_x f(x) + \lambda^\star g(x) = \lVert x - c \rVert^2 + \lambda^\star \lVert x \rVert_1 - \lambda^\star\beta
+\min_x f(x) + \lambda^\star g(x) = \lVert x - c \rVert^2 + \lambda^\star \lVert x \rVert_1 - \lambda^\star\tau
 \end{equation*}
 Le dernier terme ne dépend pas de $x$, et les deux précédents sont précisément la fonction régularisée~(\ref{eq:sphereL1}).
 Le dessin ci-dessous représente la fonction sphère et la limite de la contrainte sur $\lVert x \rVert_1$. On voit que la solution tend à 
@@ -154,8 +161,35 @@ en plus quand on monte en dimensions et est moins frappant quand $d=2$.
 \begin{center}
  \includegraphics[width=0.5\textwidth]{l1sphere_regularization-crop.pdf}
 \end{center}
-
 Analogie machine learning: si les composantes de $x$ sont des poids de réseau de neurone, cela veut dire que certains liens dans le réseau de neurone sont supprimés.
 Ainsi le réseau a une plus faible capacité à surapprendre les données, il généralise mieux. Tout l'art est de trouver la bonne valeur de $\lambda$.
+
+\vskip\baselineskip
+\noindent 5. 
+\begin{center}
+\begin{minipage}[t]{\textwidth}
+\begin{algorithmic}
+\REQUIRE \texttt{budget}, \texttt{nb\_restarts}
+\FOR {\texttt{i in 1} \TO \texttt{nb\_restarts} }
+\STATE \texttt{xinit <- runif(n=d,min=LB,max=UB)}
+\STATE \texttt{res<-gradient\_descent(xinit,budget=budget/nb\_restarts)}
+\STATE {update global search results}
+\ENDFOR
+\end{algorithmic}
+\end{minipage}
+\end{center}
+Plus de détails dans le fichier \texttt{restarted\_descent}.
+Exemple d'exécution sur \texttt{rastrigin, d<-2, budget<-1000, nb\_restart<-10}: 
+\begin{center}
+\mbox{
+\begin{minipage}[t]{0.4\textwidth}
+\includegraphics[width=\textwidth]{rastrigin_budget1000_restart10_f-crop.pdf}
+\end{minipage}
+\vspace{0.7cm}
+\begin{minipage}[t]{0.4\textwidth}
+\includegraphics[width=\textwidth]{rastrigin_budget1000_restart10_x-crop.pdf}
+\end{minipage}
+}
+\end{center}
 
 \end{document}

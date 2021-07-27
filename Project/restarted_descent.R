@@ -78,7 +78,7 @@ restarted_descent <- function(pbFormulation,algoParam,printlevel=1) {
         # put a selection of best-so-far on top in red (should resemble iterates)
         points(total_res$rBest$X[,1], total_res$rBest$X[,2], pch=19, col="red") 
         iplot <- inc.geom.seq(from=1,to=length(total_res$rBest$Time),coef=1.4) # selection, otherwise unreadable
-        text(x=total_res$rBest$X[iplot,1], y=total_res$rBest$X[iplot,2],labels=total_res$rBest$Time[iplot], pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
+        # text(x=total_res$rBest$X[iplot,1], y=total_res$rBest$X[iplot,2],labels=total_res$rBest$Time[iplot], pos=3, cex=1.0) # (un)comment for labeling (or not) nb of calls to f when points created
         # dev.off()
       }
       
