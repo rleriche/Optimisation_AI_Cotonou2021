@@ -58,21 +58,10 @@ MSEtest<-NNmse(NN = NN,X = Xtest,Ytarget = Ytest)
 # !!! NN , Xtrain, Ytrain passed as global variables
 # !!! x now means part of the weights of the NN
 fmse <- function(x){
-  NNx <- NN
-  # assign x to the NN
-  # W line i is the connexion to neuron i of the next layer,
-  #  the last column is the bias
-  # pick 2 variables (useful for plots)
-  # NNx$W1[1,1]<-x[1]
-  # NNx$W2[1,5]<-x[2]
-  # optimize the entire network
-  NNx$W1<-matrix(x[1:12],nrow=4,byrow = T)
-  NNx$W2<-matrix(x[1:5],nrow=1,byrow = T)
+  NNx <- xtoNN(x,NN)
   mse<-NNmse(NN = NNx,X = Xtrain,Ytarget = Ytrain)
   return(mse)
 }
-
-# xmemo <- c(NN$W1[1,1],NN$W2[1,5])
 
 source('utilities_optim.R')
 source('line_searches.R')
@@ -105,4 +94,17 @@ printlevel <- 4 # controls how much is stored and printed, choices: 0 to 4
 # a single descent
 res<-gradient_descent(pbFormulation=pbFormulation,algoParam=optAlgoParam,printlevel=printlevel)
 
-# save the NN solution
+# get the NN solution
+NNopt<-xtoNN(x = res$xbest,NN = NN)
+# see how it does in terms of test error
+# 
+Ynntest<-NNpred(NNopt,Xtest)
+Ynntrain<-NNpred(NNopt,Xtrain)
+msetrain<-NNmse(NN = NNopt,X = Xtrain,Ytarget = Ytrain)
+msetest<-NNmse(NN = NNopt,X = Xtest,Ytarget = Ytest)
+plot(Ytrain,Ynntrain)
+lines(c(-1,1),c(-1,1))
+title(paste("train RMSE=",toString(msetest)))
+plot(Ytest,Ynntest)
+lines(c(-1,1),c(-1,1))
+title(paste("test RMSE=",toString(msetest)))

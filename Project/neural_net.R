@@ -119,7 +119,25 @@ NNpred<-function(NN,X){
 NNmse<-function(NN,X,Ytarget){
   ndat<-dim(X)[1]
   Y<-NNpred(NN,X)
-  mse <- (sum(Ytarget-Y)^2)/ndat
+  mse <- sqrt((sum((Ytarget-Y)^2))/ndat)
   return(mse)
+}
+
+# transform x, the optimization variables, i.e., weights of the NN,
+# into a NN. 
+# Input :
+#   NN : a model NN that will be overwritten
+xtoNN <- function(x,NN){
+  NNx <- NN
+  # assign x to the NN
+  # W line i is the connexion to neuron i of the next layer,
+  #  the last column is the bias
+  # pick 2 variables (useful for plots)
+  # NNx$W1[1,1]<-x[1]
+  # NNx$W2[1,5]<-x[2]
+  # optimize the entire network
+  NNx$W1<-matrix(data = x[1:12],nrow=4,byrow = T)
+  NNx$W2<-matrix(data = x[13:17],nrow=1,byrow = T)
+  return(NNx)
 }
 
