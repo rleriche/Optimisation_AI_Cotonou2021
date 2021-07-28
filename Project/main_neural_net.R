@@ -29,6 +29,10 @@ Ytrain<-matrix(data=Ytrue$dat[itrain,],ncol=1)
 Ytest<-matrix(data=Ytrue$dat[itest,],ncol=1)
 ### end data collection
 
+###############################################
+### demonstrate NN utilities
+###############################################
+
 ###  describe the network
 n_x <- d
 # hidden layer activation function names
@@ -46,3 +50,59 @@ NN<-make_randomNN(n_x,hnames,onames,seednb = 2)
 MSEtrain<-NNmse(NN = NN,X = Xtrain,Ytarget = Ytrain)
 MSEtest<-NNmse(NN = NN,X = Xtest,Ytarget = Ytest)
 
+###############################################
+### optimize the NN
+###############################################
+
+# objective function wrapper, a bit ugly
+# !!! NN , Xtrain, Ytrain passed as global variables
+# !!! x now means part of the weights of the NN
+fmse <- function(x){
+  NNx <- NN
+  # assign x to the NN
+  # W line i is the connexion to neuron i of the next layer,
+  #  the last column is the bias
+  # pick 2 variables (useful for plots)
+  # NNx$W1[1,1]<-x[1]
+  # NNx$W2[1,5]<-x[2]
+  # optimize the entire network
+  NNx$W1<-matrix(x[1:12],nrow=4,byrow = T)
+  NNx$W2<-matrix(x[1:5],nrow=1,byrow = T)
+  mse<-NNmse(NN = NNx,X = Xtrain,Ytarget = Ytrain)
+  return(mse)
+}
+
+# xmemo <- c(NN$W1[1,1],NN$W2[1,5])
+
+source('utilities_optim.R')
+source('line_searches.R')
+source('gradient_descent.R')
+source('restarted_descent.R')
+
+### problem definition
+pbFormulation <- list()
+pbFormulation$fun<-fmse #function to minimize
+d<-17
+pbFormulation$d<-d # dimension
+pbFormulation$LB<-rep(-5,d) #lower bounds
+pbFormulation$UB<-rep(5,d) #upper bounds
+
+
+### algorithm settings
+optAlgoParam <- list()
+# optAlgoParam$xinit <- runif(n = d,min = -1,max = 1) # initial point
+optAlgoParam$xinit <-c(as.vector(t(randomW(3,4))),as.vector(t(randomW(5,1))))
+#
+optAlgoParam$budget <- 1000
+optAlgoParam$minGradNorm <- 1.e-6 
+optAlgoParam$minStepSize <- 1.e-11 
+#
+optAlgoParam$direction_type <- "momentum" # choices are : "gradient", "momentum", "NAG"
+optAlgoParam$linesearch_type <- "armijo" # choices are: "none", "armijo"
+optAlgoParam$beta <- 0.9 # momentum term for direction_type == "momentum" or "NAG" 
+# 
+printlevel <- 4 # controls how much is stored and printed, choices: 0 to 4
+# a single descent
+res<-gradient_descent(pbFormulation=pbFormulation,algoParam=optAlgoParam,printlevel=printlevel)
+
+# save the NN solution
