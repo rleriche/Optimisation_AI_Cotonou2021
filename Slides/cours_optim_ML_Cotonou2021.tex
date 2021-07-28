@@ -67,7 +67,7 @@ Cotonou, Bénin}
 \end{frame}
 
 \section{Introduction}
-\subsection{Objectives, acknoledgements}
+\subsection{Objectives, acknolewdgements}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
@@ -88,6 +88,8 @@ Cotonou, Bénin}
 \item through examples coded in R/python from scratch.
 \item Limitation: the algorithms are not exactly those used in state-of-the-art deep learning, but the main concepts will be presented.
 \end{itemize}
+\vskip\baselineskip
+Code, slides, project statement available at \url{https://github.com/rleriche/Optimisation_AI_Cotonou2021}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,7 +102,7 @@ This course is based on
 \item \cite{minoux2008programmation} : a classic textbook for optimization, written before the ML trend but still useful (level end of undergraduate / bac+3)
 \item \cite{bishop2006pattern} : a reference book for machine learning with some pages on optimization (level end of undergraduate / bac+3)
 \item \cite{schmidt2007fast} : L1 regularization techniques (research article)
-\item \cite{sun2019optimization} : review of optimization methods for tuning neural nets, gradient backpropagation (research article)
+\item \cite{sun2019optimization} : review of optimization methods and good practices for tuning neural nets.
 \end{itemize}
 The content of these references will be simplified for this class.
 } % end small font
@@ -140,7 +142,7 @@ Optimization is a\footnote{non unique, incomplete when considering human beings 
 \end{center}
 \vskip\baselineskip
 $x$ = aircraft parameters (here distributed electrical propulsion)\\
-$f()$ = $-1\times$ performance metric (agregation of $-1\times$ range, cost, take-off length, \ldots) \\
+$f()$ = $-1\times$ performance metric (aggregation of $-1\times$ range, cost, take-off length, \ldots) \\
 At the minimum, the design is ``optimal''.
 \end{frame}
 
@@ -315,7 +317,7 @@ Gradient of a function = direction of steepest ascent = vector of partial deriva
 \begin{minipage}[b]{0.6\textwidth}
 By forward finite differences 
 \begin{equation*}
-\frac{\partial f}{\partial x_i}f(x) \approx \frac{f(x+h e^i)-f(x)}{h}
+\frac{\partial f(x)}{\partial x_i} \approx \frac{f(x+h e^i)-f(x)}{h}
 \end{equation*}
 {Proof: \scriptsize
  by Taylor,\\
@@ -552,7 +554,7 @@ At iteration $i$:
 \RETURN $\alpha^i \leftarrow \alpha$
 \end{algorithmic}
 \end{block}
-Note: from now on, use line search, and the number of calls to $f$ is no longer equal to the iteration number since many function calls can be done during a line search within a single iteration.
+From now on, use line search, and the number of calls to $f$ is no longer equal to the iteration number since many function calls can be done during a line search within a single iteration.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -574,7 +576,7 @@ Better, but not perfect: oscillations make progress very slow.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Gradient convergence speed} 
-$f(x) = \frac{1}{2} x^\top H x$ in $d=10$ dimensions, $H\ge 0$, not aligned with the axes, condition number = 10.
+$f(x) = \frac{1}{2} x^\top H x$ in $d=10$ dimensions, $H>0$, not aligned with the axes, condition number = 10.
 \begin{center}
 \mbox{
 \begin{minipage}[c]{0.37\textwidth}
@@ -643,7 +645,7 @@ Introduce a momentum (i.e., a memory) in the search step \cite{polyak1964some},
 s^i = -\grad f(x^i) + \beta s^{i-1}
 \end{equation*} 
 where\footnote{alternatively, for iteration varying momentum, $\beta^i=(i-2)/(i+1)$} $\beta = 0.9$.\\
-\vspace{-0.8cm}
+\vspace{-0.6cm}
 \begin{minipage}[c]{0.5\textwidth}
 This should contribute to avoid the oscillations occuring at the botton of valleys.\\
 $s^i$ still a descent direction.
@@ -756,12 +758,12 @@ approximation to the gradient.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Bound constraints} 
-$\mathcal S$ is an hypercube of $\Rset[d]$, $\mathcal S = [LB,UB] \in \Rset[d]$.
+$\mathcal S$ is an hypercube of $\Rset[d]$, $\mathcal S = [LB,UB] \subset \Rset[d]$.
 \vskip\baselineskip
 It could be described by constraints, 
 $g_{2i-1}(x) \coloneqq LB_i - x_i \le 0$,
 $g_{2i}(x) \coloneqq x_i - UB_i \le 0$, $i=1,\ldots,d$
-but these constraints are so simple that they directly handled by projection.\\
+but these constraints are so simple that they can be directly handled by projection.\\
 \mbox{
 \begin{minipage}[c]{0.4\textwidth}
 If $x^i$ is at a bound and the search direction $d^i$ takes it outside$^a$
@@ -791,7 +793,7 @@ Exercise: how to code this?
 \right.
 \end{equation*}
 \hfill{\scriptsize (vector notation for the constraints)}\\
-We give two techniques to agregate $f$ and the $g_i$'s into a new objective function 
+We give two techniques to aggregate $f$ and the $g_i$'s into a new objective function 
 (to minimize).
 \vskip\baselineskip
 \textbf{External penalty function}: penalize points that do not satisfy the constraints
@@ -817,7 +819,7 @@ f_r(x) = f(x) + r \left[\max(0,g(x)) \right]^2 \quad,\quad r>0
 \end{equation*}
 The Lagrangian $L(;\lambda^\star)$ is (when no duality gap) a valid penalty function.
 \begin{itemize}
-\item{Pros}: duality provides a way to calculate $\lambda^\star$.
+\item{Pros}: duality provides a way to calculate $\lambda^\star$, yields a feasible solution.
 \item{Cons}: estimating $\lambda^\star$ has a numerical cost. 
 For most problems with local optima there is a duality gap $\Rightarrow$ rely on augmented Lagrangians$^4$.
 \end{itemize}
@@ -865,7 +867,7 @@ Main flaw: gets trapped in local minima.
 \frametitle{Restarted local searches} 
 \vfill
 \begin{center}
-\begin{minipage}[c]{0.4\textwidth}
+\begin{minipage}[c]{0.6\textwidth}
 \textbf{treated as a project question}
 \end{minipage}
 \end{center}
@@ -874,6 +876,24 @@ Main flaw: gets trapped in local minima.
 
 
 \section{Application to neural network}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Application to neural network} 
+\begin{equation*}
+\begin{split}
+& \min_{x \in [LB,UB] \subset \Rset[d]} f_\lambda(x) = f(x) + \lambda \lVert x \rVert_1 \\
+ \text{ where } f(x) =& - \sum_{i=1}^N \{ t^i \log(y(e^i;x)) + (1-t^i) \log(1 - y(e^i;x))\} \\
+& \text{ for classification} \\
+f(x) & = 1/2 \sum_{i=1}^N (t^i - y(e^i;x))^2  \text{ for regression}
+\end{split}
+\end{equation*}
+\begin{center}
+\begin{minipage}[c]{0.6\textwidth}
+\textbf{more as a project question}
+\end{minipage}
+\end{center}
+\end{frame}
 
 \section*{Conclusions}
 
