@@ -47,8 +47,8 @@ NN<-make_randomNN(n_x,hnames,onames,seednb = 2)
 # Ytest<-NNpred(NN,Xtest)
 
 # evaluate NN MSE w.r.t. certain data
-MSEtrain<-NNmse(NN = NN,X = Xtrain,Ytarget = Ytrain)
-MSEtest<-NNmse(NN = NN,X = Xtest,Ytarget = Ytest)
+RMSEtrain<-NNrmse(NN = NN,X = Xtrain,Ytarget = Ytrain)
+RMSEtest<-NNrmse(NN = NN,X = Xtest,Ytarget = Ytest)
 
 ###############################################
 ### optimize the NN
@@ -57,10 +57,13 @@ MSEtest<-NNmse(NN = NN,X = Xtest,Ytarget = Ytest)
 # objective function wrapper, a bit ugly
 # !!! NN , Xtrain, Ytrain passed as global variables
 # !!! x now means part of the weights of the NN
-fmse <- function(x){
+rrmse <- function(x){
+  lambda<-0.1
   NNx <- xtoNN(x,NN)
-  mse<-NNmse(NN = NNx,X = Xtrain,Ytarget = Ytrain)
-  return(mse)
+  rmse<-NNrmse(NN = NNx,X = Xtrain,Ytarget = Ytrain)
+  l1<-L1norm(x)
+  regRMSE<-rmse+lambda/length(x)*L1norm(x)
+  return(regRMSE)
 }
 
 source('utilities_optim.R')
@@ -70,7 +73,7 @@ source('restarted_descent.R')
 
 ### problem definition
 pbFormulation <- list()
-pbFormulation$fun<-fmse #function to minimize
+pbFormulation$fun<-rrmse #function to minimize
 d<-17
 pbFormulation$d<-d # dimension
 pbFormulation$LB<-rep(-5,d) #lower bounds
@@ -82,7 +85,7 @@ optAlgoParam <- list()
 # optAlgoParam$xinit <- runif(n = d,min = -1,max = 1) # initial point
 optAlgoParam$xinit <-c(as.vector(t(randomW(3,4))),as.vector(t(randomW(5,1))))
 #
-optAlgoParam$budget <- 1000
+optAlgoParam$budget <- 40000
 optAlgoParam$minGradNorm <- 1.e-6 
 optAlgoParam$minStepSize <- 1.e-11 
 #
@@ -92,7 +95,9 @@ optAlgoParam$beta <- 0.9 # momentum term for direction_type == "momentum" or "NA
 # 
 printlevel <- 4 # controls how much is stored and printed, choices: 0 to 4
 # a single descent
-res<-gradient_descent(pbFormulation=pbFormulation,algoParam=optAlgoParam,printlevel=printlevel)
+# res<-gradient_descent(pbFormulation=pbFormulation,algoParam=optAlgoParam,printlevel=printlevel)
+optAlgoParam$nb_restarts <- 4
+res <- restarted_descent(pbFormulation=pbFormulation,algoParam = optAlgoParam,printlevel=printlevel)
 
 # get the NN solution
 NNopt<-xtoNN(x = res$xbest,NN = NN)
@@ -100,11 +105,11 @@ NNopt<-xtoNN(x = res$xbest,NN = NN)
 # 
 Ynntest<-NNpred(NNopt,Xtest)
 Ynntrain<-NNpred(NNopt,Xtrain)
-msetrain<-NNmse(NN = NNopt,X = Xtrain,Ytarget = Ytrain)
-msetest<-NNmse(NN = NNopt,X = Xtest,Ytarget = Ytest)
+rmsetrain<-NNrmse(NN = NNopt,X = Xtrain,Ytarget = Ytrain)
+rmsetest<-NNrmse(NN = NNopt,X = Xtest,Ytarget = Ytest)
 plot(Ytrain,Ynntrain)
 lines(c(-1,1),c(-1,1))
-title(paste("train RMSE=",toString(msetest)))
+title(paste("train RMSE=",toString(rmsetrain)))
 plot(Ytest,Ynntest)
 lines(c(-1,1),c(-1,1))
-title(paste("test RMSE=",toString(msetest)))
+title(paste("test RMSE=",toString(rmsetest)))

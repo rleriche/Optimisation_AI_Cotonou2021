@@ -113,14 +113,14 @@ NNpred<-function(NN,X){
   return(Y)
 }
 
-# calculate mean square error
+# calculate root mean square error
 # X is ndata*n_x  (n_x dimension of the input to the NN)
 # Y is ndata*n_y
-NNmse<-function(NN,X,Ytarget){
+NNrmse<-function(NN,X,Ytarget){
   ndat<-dim(X)[1]
   Y<-NNpred(NN,X)
-  mse <- sqrt((sum((Ytarget-Y)^2))/ndat)
-  return(mse)
+  rmse <- sqrt((sum((Ytarget-Y)^2))/ndat)
+  return(rmse)
 }
 
 # transform x, the optimization variables, i.e., weights of the NN,
