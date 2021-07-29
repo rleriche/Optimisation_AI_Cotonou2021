@@ -101,6 +101,19 @@ Une façon simple de remédier partiellement à ce problème est de redémarrer 
 \item Proposer un algorithme et le programmer qui réalise des redémarrages aléatoires de d'optimisation par descente.
 \end{enumerate}
 
+\section*{Régularisation vs. nombre de points de données pour un réseau de neurones}
+Reprendre le code donné dans le fichier \texttt{main\_neural\_net}: il s'agit d'un réseau de neurone utilisé 
+en régression pour apprendre une fonction à 2 dimensions (donc il y a 2 entrées dans le réseau).
+On se propose d'étudier le rapport entre le nombre de données d'apprentissage, \texttt{ntrain}, 
+et le bon choix du paramètre de régularisation $\lambda$ (\texttt{lambda} dans le code). 
+\begin{enumerate}
+\setcounter{enumi}{5}
+\item Essayer les valeurs : \texttt{ntrain}=5, 10 et 50, et toutes leurs combinaisons avec $\lambda=0.01,~0.1$ et 1.
+Que remarquez vous sur l'erreur de test (\texttt{rmsetest}) ? Comment l'expliquez vous ? 
+Que peut on dire sur l'évolution de l'erreur d'apprentissage (\texttt{rmsetrain}) dans cette campagne d'essais?
+Que remarque-t-on sur les caractéristiques de solutions $x^\star$?
+\end{enumerate}
+
 \appendix
 \newpage
 \section*{Réponses et commentaires supplémentaires}
@@ -191,5 +204,32 @@ Exemple d'exécution sur \texttt{rastrigin, d<-2, budget<-1000, nb\_restart<-10}
 \end{minipage}
 }
 \end{center}
+
+\vskip\baselineskip
+\noindent 6. 
+Régularisation vs. nombre de données: le plan d'expérience donne les résultats suivants:
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|}
+\hline
+~ & $\lambda=0.01$ &$\lambda=0.1$ &$\lambda=1$\\ 
+\hline
+\texttt{ntrain=5}& 0.62266703 &0.53166419 &\textcolor{red}{0.5217468}\\
+\hline
+\texttt{ntrain=10}& 0.66836290& \textcolor{red}{0.21722179}& 0.4202079\\
+\hline
+\texttt{ntrain=50}& \textcolor{red}{0.05191297}& 0.06292801& 0.4229770\\
+\hline
+\end{tabular}
+\caption{Root Mean Square Error sur ensemble de test, \texttt{ntest=100}.
+En rouge: plus faible erreur par ligne (par nombre de données d'apprentissage).}
+\end{table}
+On remarque que quand il y a peu de données, il est préférable de beaucoup régulariser
+($\lambda=1$ est mieux avec 5 points d'apprentissage) et vice versa, avec 
+beaucoup de données (50 points) il n'est pas vraiment nécessaire de régulariser.
+Intuitivement, cela peut être vu comme un rapport entre la flexibilité du réseau (qui augmente quand 
+$\lambda$ décroît) et le nombre de points d'apprentissage qui contraignent le réseau à passer par eux:
+un réseau flexible et peu contraint (maintenu) pour prédire n'importe quoi entre les points d'apprentissage, 
+il généralise mal.\\
+\texttt{rmsetrain} augmente avec $\lambda$ car l'accent est de plus en plus mis sur la minimisation de $\lVert x \rVert_1$. D'ailleurs, quand $\lambda$ est grand, de nombreuses composantes du réseau sont nulles, d'autant plus qu'il y a peu de points de données.
 
 \end{document}

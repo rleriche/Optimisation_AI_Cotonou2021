@@ -10,8 +10,8 @@ fun<-quadratic
 d<-2
 LB <- rep(-5,d)
 UB <- rep(5,d)
-ntrain <- 50
-ntest <- 50
+ntrain <- 10
+ntest <- 100
 ndata <- ntrain + ntest
 set.seed(1) # unset seed to always have same data
 rawX <-t(replicate(n = ndata,expr = runif(n = d,min = LB,max = UB)))
@@ -58,7 +58,7 @@ RMSEtest<-NNrmse(NN = NN,X = Xtest,Ytarget = Ytest)
 # !!! NN , Xtrain, Ytrain passed as global variables
 # !!! x now means part of the weights of the NN
 rrmse <- function(x){
-  lambda<-0.1
+  lambda<-1
   NNx <- xtoNN(x,NN)
   rmse<-NNrmse(NN = NNx,X = Xtrain,Ytarget = Ytrain)
   l1<-L1norm(x)
