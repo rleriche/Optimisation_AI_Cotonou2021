@@ -289,15 +289,17 @@ $f()$ = an error of the NN predictions (sum-of-squares error):
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Local versus global optimum} 
+\vspace{-0.5cm}
 \begin{equation*}
 \min_{x \in \mathcal S \subset \Rset[d]} f(x)
 \end{equation*}
-\vspace{-0.4cm}
+\vspace{-0.5cm}
 \begin{center}
 \includegraphics[width=0.7\textwidth]{michalewicz_function_annotated-crop.pdf} \\
 \end{center}
-\vspace{-1.cm}
-R code to generate the plot given in the project folder
+\vspace{-1.0cm}
+R code to generate such a 3D plot given in the project folder, \texttt{3Dplots.R} \\
+\vfill
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -453,10 +455,26 @@ The size of the steps is proportional to the gradient norm.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
+\frametitle{(code organization)} 
+\begin{itemize}
+\item \texttt{mainOptim.R}: main script for starting the descent algorithms.
+\item \texttt{gradient\_descent.R}: gradient-based descent algorithms; the current gradient fixed-step version, and the ones coming up.
+\item \texttt{line\_searches.R}: line search routine.
+\item \texttt{test\_functions.R}: a collection of test functions.
+\item \texttt{3Dplots.R}: plots a 2 dimensional function in a 3D dynamic plot + contour plot.
+\item \texttt{utilities\_optim.R}: additional routines.
+\item \texttt{restarted\_descent.R}: program to restart the descent search + associated vizualizations.
+\item \texttt{neural\_net.R}: a feedforward network coded from scratch.
+\item \texttt{main\_neural\_net.R}: main script for learning a neural network with the optimization functions.
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
 \frametitle{Fixed step steepest descent algorithm (2)} 
 \begin{itemize}
 \item The choice of the step size factor $\alpha$ is critical : the steeper the function, the smaller $\alpha$. Default value = 0.1
-\item The true code (cf. project) is much longer and filled with instructions for reporting the points visited and doing plots afterwards.
+\item The true code (cf. \texttt{gradient\_descent.R}) is much longer and filled with instructions for reporting the points visited and doing plots afterwards.
 \end{itemize}
 \vspace{-0.5cm}
 \begin{center}
