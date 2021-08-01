@@ -69,6 +69,24 @@ Cotonou, Bénin}
 \section{Introduction}
 \subsection{Objectives, acknolewdgements}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Foreword}
+This course was first given during a summer school on AI in Cotonou, Benin, July-Aug. 2021.
+The school was organized by the Benin Excellence NGO and the Vallet Foundation (cf. 
+{\scriptsize
+\url{https://www.fondationdefrance.org/fr/au-benin-une-universite-dete-impulsee-par-la-fondation-vallet}}
+).
+\begin{itemize}
+\item The course provides basic concepts for numerical optimization
+\item for an audience interested in machine learning
+\item with a background corresponding to 1 year after high school
+\item through examples coded in R from scratch.
+\item Limitation: the algorithms are not exactly those used in state-of-the-art deep learning, but the main concepts will be presented.
+\end{itemize}
+The code, the slides and the project statement are available at \url{https://github.com/rleriche/Optimisation_AI_Cotonou2021}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
 \frametitle{Course outline} 
@@ -76,20 +94,6 @@ Cotonou, Bénin}
 \begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
 \tableofcontents[currentsection]
 %\end{multicols}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\frametitle{Objectives of this course}
-\begin{itemize}
-\item Provides basic concepts for numerical optimization
-\item for an audience interested in machine learning
-\item with a background corresponding to 1 year after high school
-\item through examples coded in R/python from scratch.
-\item Limitation: the algorithms are not exactly those used in state-of-the-art deep learning, but the main concepts will be presented.
-\end{itemize}
-\vskip\baselineskip
-Code, slides, project statement available at \url{https://github.com/rleriche/Optimisation_AI_Cotonou2021}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -865,13 +869,43 @@ Main flaw: gets trapped in local minima.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Restarted local searches} 
-\vfill
+Simple principle: restart descent searches from initial points chosen at random.\\
+Use randomness to make deterministic descent searches more robust.\\
+A mix between 2 extremes: local vs global, line search vs volume search, specific (to unimodal differentiable 
+functions) vs without assumption, efficient vs very slow.\\
+Simplistic implementation (cf. code provided) \\
+\hspace{5cm} at a cost $\times$ \texttt{nb\_restarts}:
+\vspace{-0.4cm}
 \begin{center}
-\begin{minipage}[c]{0.6\textwidth}
-\textbf{treated as a project question}
+\begin{minipage}[t]{\textwidth}
+\begin{algorithmic}
+\REQUIRE \texttt{budget}, \texttt{nb\_restarts}
+\FOR {\texttt{i in 1} \TO \texttt{nb\_restarts} }
+\STATE \texttt{xinit <- runif(n=d,min=LB,max=UB)}
+\STATE \texttt{res<-gradient\_descent(xinit,budget=budget/nb\_restarts)}
+\STATE {update global search results}
+\ENDFOR
+\end{algorithmic}
 \end{minipage}
 \end{center}
-\vfill
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Restarted local searches: example} 
+Execution of the \texttt{restarted\_descent} file. \\
+\texttt{fun <-rastrigin, d<-2, budget<-1000, nb\_restart<-10}:
+\begin{center}
+\mbox{
+\begin{minipage}[t]{0.4\textwidth}
+\includegraphics[width=\textwidth]{rastrigin_budget1000_restart10_f-crop.pdf}
+\end{minipage}
+\vspace{0.7cm}
+\begin{minipage}[t]{0.4\textwidth}
+\includegraphics[width=\textwidth]{rastrigin_budget1000_restart10_x-crop.pdf}
+\end{minipage}
+}
+\end{center}
 \end{frame}
 
 

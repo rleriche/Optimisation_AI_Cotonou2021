@@ -58,7 +58,7 @@ RMSEtest<-NNrmse(NN = NN,X = Xtest,Ytarget = Ytest)
 # !!! NN , Xtrain, Ytrain passed as global variables
 # !!! x now means part of the weights of the NN
 rrmse <- function(x){
-  lambda<-1
+  lambda<-0.1
   NNx <- xtoNN(x,NN)
   rmse<-NNrmse(NN = NNx,X = Xtrain,Ytarget = Ytrain)
   l1<-L1norm(x)
