@@ -90,10 +90,10 @@ The code, the slides and the project statement are available at \url{https://git
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
 \frametitle{Course outline} 
-%\begin{multicols}{2}
+\begin{multicols}{2}
 \begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
 \tableofcontents[currentsection]
-%\end{multicols}
+\end{multicols}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -281,9 +281,9 @@ $f()$ = an error of the NN predictions (sum-of-squares error):
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
 \frametitle{Basic mathematical concepts for optimization} 
-%\begin{multicols}{2}
+\begin{multicols}{2}
 \tableofcontents[currentsection]
-%\end{multicols}
+\end{multicols}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -407,10 +407,10 @@ $\grad f()$ not defined everywhere, example with L1 norm $= \sum_i^d \lvert x_i 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
 \frametitle{Course outline} 
-%\begin{multicols}{2}
+\begin{multicols}{2}
 \begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
 \tableofcontents[currentsection]
-%\end{multicols}
+\end{multicols}
 \end{frame}
 
 
@@ -646,10 +646,10 @@ If the direction is the gradient,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
 \frametitle{Course outline} 
-%\begin{multicols}{2}
+\begin{multicols}{2}
 \begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
 \tableofcontents[currentsection]
-%\end{multicols}
+\end{multicols}
 \end{frame}
 
 \subsection{Search directions for acceleration}
@@ -758,10 +758,10 @@ approximation to the gradient.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}%[allowframebreaks]
 \frametitle{Course outline} 
-%\begin{multicols}{2}
+\begin{multicols}{2}
 \begin{center} \textbf{An introduction to optimization for machine learning} \end{center}
 \tableofcontents[currentsection]
-%\end{multicols}
+\end{multicols}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -883,6 +883,73 @@ Main flaw: gets trapped in local minima.
 \end{frame}
 
 \subsection{Towards ML: regularized quadratic function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Towards ML: regularized quadratic function} 
+Let's consider a function with a relationship to ML:
+\begin{equation}
+f(x) ~=~ \sum_{i=1}^d (x_i-c_i)^2 + \lambda \sum_{i=1}^d \lvert x_i \rvert \quad,\quad \lambda \ge 0
+\label{eq:sphereL1}
+\end{equation}
+First term: sphere function centered at $c$, $c_i = i~,~i=1,\ldots,d$. A simplistic model to the mean square error of a NN where $c$ minimizes the training error.\\
+Second term: L1 norm times $\lambda$. The $x_i$'s would be the weights of a NN. 
+This term helps in improving the test error.
+Let's see why.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Exercise} 
+\begin{enumerate}
+\item Program the regularized sphere function (\ref{eq:sphereL1}). 
+\item Minimize it with any version of the previous descent algorithm with a line search in 
+dimension $d=10$ with $\mathcal S = [-5,5]^d$. 
+Try several values of $\lambda \ge 0$. What do you notice on the solution $x^\star$ found? 
+Why, if the $x$'s were a NN weights, would it improve the generalization ability of the NN?
+\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks] 
+\frametitle{Response}
+\begin{enumerate}
+\item Cf. function \texttt{sphereL1} at the end of file \texttt{test\_functions}.
+\item ~\\
+{\scriptsize
+\begin{tabular}{|c|cccccccccc}
+$\lambda=0.01$ & 0.99 & 1.99 & 2.99 & 3.99 & 4.99 & 5 & 5 & 5 & 5 & 5 \\
+%$\lambda=0.1$ & 0.95 &1.95 &2.95 &3.95 &4.95 &5 &5 &5 &5 &5
+$\lambda=1$ &0.5 &1.5 &2.5 &3.5 &4.5 &5 &5 &5 &5 &5 \\
+$\lambda=3$ & 0 & 0.5 & 1.5 & 2.49 & 3.49 & 4.49&  5 & 5 & 5 & 5 \\
+$\lambda=5$ & 0 & 0 & 0.48 & 1.50 & 2.49 & 3.51 & 4.50 & 5 & 5 & 5 \\
+$\lambda=10$ & 0 & 0 & 0 & 0 & 0.16 & 0.90 & 2. & 3.23 & 3.92 & 5 
+\end{tabular}
+}
+As $\lambda$ increases, more $x_i$'s tend to 0. Because $c_i=i$, the components of lower rank are closer to 0, they are thus the first ones to be set to 0. \\
+This phenomenon can be better understood by interpreting Problem ~(\ref{eq:sphereL1}) as a constrained optimization problem.
+\begin{equation*}
+\left\{
+\begin{array}{l}
+\min_x f(x) = \lVert x - c \rVert^2 \\
+\text{tel que }~~ g(x) = \lVert x \rVert_1 - \tau \le 0 \quad,\quad \tau>0
+\end{array}
+\right.
+\end{equation*}
+has the following Lagrangian, to be minimized on $x$
+\begin{equation*}
+\min_x f(x) + \lambda^\star g(x) = \lVert x - c \rVert^2 + \lambda^\star \lVert x \rVert_1 - \lambda^\star\tau
+\end{equation*}
+The first 2 terms are the regularized function (\ref{eq:sphereL1}), the last term doesn't depend on $x$.
+Let's draw the sphere function and the constraint boundary $\lVert x \rVert_1$:
+\begin{center}
+ \includegraphics[height=5cm]{l1sphere_regularization-crop.pdf}
+\end{center}
+It is seen that the solution tends to be at a vertex of the feasible domain, where some of the $x$ components cancel out. 
+This phenomenon occurs more often when $d$ is large and is less obvious for $d=2$. \\
+If the $x$'s were a NN weights, setting $x_i$ to 0 is equivalent to cutting the corresponding link, thus reducing the NN capacity, thus making it less prone to overfitting. Finding the best value for $\lambda$ is something of an art.
+\end{enumerate}
+\end{frame}
 
 \subsection{Making it more global: restarts}
 

@@ -13,7 +13,7 @@ UB <- rep(5,d)
 ntrain <- 10
 ntest <- 100
 ndata <- ntrain + ntest
-set.seed(1) # unset seed to always have same data
+set.seed(1) # set seed to always have same data
 rawX <-t(replicate(n = ndata,expr = runif(n = d,min = LB,max = UB)))
 set.seed(Sys.time()) # unset seed, back to "random"
 rawYtrue <- apply(X = rawX,MARGIN = 1,FUN = fun)

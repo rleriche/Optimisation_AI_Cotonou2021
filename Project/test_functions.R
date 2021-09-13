@@ -140,7 +140,7 @@ rosen <- function(xx)
 
 # L1 regularization of sphere
 sphereL1 <- function(xx){
-  lambda<-5
+  lambda<-10.
   y<-sphere(xx)+lambda*L1norm(xx) 
   return(y)
 } 
