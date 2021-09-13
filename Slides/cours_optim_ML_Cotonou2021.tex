@@ -1057,7 +1057,8 @@ a flexible NN with little constraints may be wrong away from the data points.
 
 \texttt{rmsetrain} increases with $\lambda$ since the emphasis is put on the minimization of $\lVert x \rVert_1$ at the expense of data fitting. 
 \vskip\baselineskip
-When $\lambda$ is large, some weights of the NN cancel out. The number of removed weights grows when the size of the training set diminishes.
+When $\lambda$ is large, some weights of the NN cancel out. 
+The number of null weights grows when the size of the training set diminishes.
 \end{frame}
 
 \section*{Conclusions}
@@ -1067,7 +1068,8 @@ When $\lambda$ is large, some weights of the NN cancel out. The number of remove
 \frametitle{Conclusions}
 \begin{itemize}
 \item Numerical optimization is a fundamental technique for quantitative decision making, statistical modeling, machine learning, \ldots
-\item The enthousiasm for machine learning has led to very many optimization algorithms which we did not discuss in this introductory course: Bayesian optimization for hyper-parameters tuning (regularization constants, number of NN layers, types of neurons, parameters of the gradient based algorithms)
+\item The enthousiasm for machine learning has led to very many optimization algorithms which we did not discuss in this introductory course: see for example \cite{sun2019survey,sra2012optimization}. 
+\item Also not covered yet emerging: Bayesian optimization for hyper-parameters tuning (regularization constants, number of NN layers, types of neurons, parameters of the gradient based algorithms) \cite{snoek2012practical}.
 \end{itemize}
 \end{frame}
 
