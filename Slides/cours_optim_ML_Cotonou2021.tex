@@ -912,7 +912,7 @@ Why, if the $x$'s were a NN weights, would it improve the generalization ability
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[allowframebreaks] 
-\frametitle{Response}
+\frametitle{Solution}
 \begin{enumerate}
 \item Cf. function \texttt{sphereL1} at the end of file \texttt{test\_functions}.
 \item ~\\
@@ -999,21 +999,65 @@ Execution of the \texttt{restarted\_descent} file. \\
 \section{Application to neural network}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+\begin{frame}%[allowframebreaks]
 \frametitle{Application to neural network} 
 \begin{equation*}
 \begin{split}
 & \min_{x \in [LB,UB] \subset \Rset[d]} f_\lambda(x) = f(x) + \lambda \lVert x \rVert_1 \\
- \text{ where } f(x) =& - \sum_{i=1}^N \{ t^i \log(y(e^i;x)) + (1-t^i) \log(1 - y(e^i;x))\} \\
-& \text{ for classification} \\
-f(x) & = 1/2 \sum_{i=1}^N (t^i - y(e^i;x))^2  \text{ for regression}
+& \text{ where, for classification, } \\
+& f(x) = - \sum_{i=1}^N \{ t^i \log(y(e^i;x)) + (1-t^i) \log(1 - y(e^i;x))\} \\
+& \text{ and for regression,} \\
+& f(x)  = 1/2 \sum_{i=1}^N (t^i - y(e^i;x))^2  
 \end{split}
 \end{equation*}
 \begin{center}
 \begin{minipage}[c]{0.6\textwidth}
-\textbf{more as a project question}
 \end{minipage}
 \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}%[allowframebreaks]
+\frametitle{Exercise: regularization vs. training data size} 
+Study the relationship between the number of training points and the best choice of the regularization parameter.
+\vskip\baselineskip
+To do this, use the file \texttt{main\_neural\_net} from \url{https://github.com/rleriche/Optimisation_AI_Cotonou2021}.
+It contains the code for a 2 inputs NN in regression, \texttt{ntrain} is the number of training points, \texttt{lambda} the regularization parameter. \\
+Try all the combinations between \texttt{ntrain}=5, 10 et 50, and $\lambda=0.01,~0.1$ et 1.
+\vskip\baselineskip
+What do you notice on the test error (\texttt{rmsetest}) ? How do you explain it ?
+How does the training error evolve (\texttt{rmsetrain}) ?
+Same question with the calculated solutions $x^\star$?
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]
+\frametitle{Solution} 
+Regularization vs. training size: the experiments yield:
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|}
+\hline
+~ & $\lambda=0.01$ &$\lambda=0.1$ &$\lambda=1$\\
+\hline
+\texttt{ntrain=5}& 0.62266703 &0.53166419 &\textcolor{red}{0.5217468}\\
+\hline
+\texttt{ntrain=10}& 0.66836290& \textcolor{red}{0.21722179}& 0.4202079\\
+\hline
+\texttt{ntrain=50}& \textcolor{red}{0.05191297}& 0.06292801& 0.4229770\\
+\hline
+\end{tabular}
+\caption{Root Mean Square Error on the test set, \texttt{ntest=100}.
+In red: smallest error per row (i.e., per training data set size).}
+\end{table}
+When \texttt{ntrain} is small, it is best to regularize a lot: $\lambda=1$ is the best setting with 5 training points.
+Vice versa, a large training set (50 points) does not need much regularization. 
+There is a trade-off between the NN flexibility  (that increases when $\lambda$ decreases) and the number of training points that constraint the NN: 
+a flexible NN with little constraints may be wrong away from the data points.
+\vskip\baselineskip
+
+\texttt{rmsetrain} increases with $\lambda$ since the emphasis is put on the minimization of $\lVert x \rVert_1$ at the expense of data fitting. 
+\vskip\baselineskip
+When $\lambda$ is large, some weights of the NN cancel out. The number of removed weights grows when the size of the training set diminishes.
 \end{frame}
 
 \section*{Conclusions}
