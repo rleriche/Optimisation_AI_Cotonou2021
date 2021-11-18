@@ -192,8 +192,8 @@ $f()$ = an error of the NN predictions (a cross-entropy error):
 \begin{itemize}
 \item View the relationship between the entry $e$ and the class $t$ as probabilistic (generalizes deterministic functions): $t(e)$ is a Bernoulli variable with a given probability that $t(e)=1$
 \item The NN models this probability: $y(e;x)$ is the probability that $t(e)=1$, $1-y(e;x)$ is the proba that $t(e)=0$, $0\le y(e;x) \le 1$.
-\item The probability of $t$ knowing $e$ can be written $y(e;x)^{t}+(1-y(e;x))^{1-t}$
-\item The likelihood of the $N$ i.i.d observations is $\prod_{i=1}^N \left[y(e^i;x)^{t^i}+(1-y(e^i;x))^{1-t^i}\right]$, to be maximized
+\item The probability of $t$ knowing $e$ can be written $y(e;x)^{t}\times(1-y(e;x))^{1-t}$
+\item The likelihood of the $N$ i.i.d observations is $\prod_{i=1}^N \left[y(e^i;x)^{t^i}\times(1-y(e^i;x))^{1-t^i}\right]$, to be maximized
 \item The likelihood is turned into an error, to be minimized, by taking $-\log(\text{likelihood})$, 
 \begin{equation*}
 f(x) = - \sum_{i=1}^N \{ t^i \log(y(e^i;x)) + (1-t^i) \log(1 - y(e^i;x))\}
