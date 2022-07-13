@@ -151,98 +151,105 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
     startmsg <- paste0("Start ",direction_type," (direction) + ",linesearch_type," (line search) descent\n")
     cat(startmsg)
   }
-  while (isFALSE(stopBudget) & isFALSE(stopGradNorm) & isFALSE(stopStepSize) ){
-    
-    if (direction_type=="gradient"){
-      step <- -eval$gradf
-    }
-    else if (direction_type=="momentum"){
-      if (iter <= 1){
+
+  if ((normGrad/sqrt(d)) <= minGradNorm) {
+    # start at a flat point, just quit immediately
+    stopGradNorm<-TRUE
+  } else {
+
+    while (isFALSE(stopBudget) & isFALSE(stopGradNorm) & isFALSE(stopStepSize) ){
+      
+      if (direction_type=="gradient"){
         step <- -eval$gradf
       }
-      else {
-        step <- -eval$gradf + beta*previous_step
+      else if (direction_type=="momentum"){
+        if (iter <= 1){
+          step <- -eval$gradf
+        }
+        else {
+          step <- -eval$gradf + beta*previous_step
+        }
       }
-    }
-    else if (direction_type=="NAG"){
-      if (iter <= 1){
-        step <- -eval$gradf
+      else if (direction_type=="NAG"){
+        if (iter <= 1){
+          step <- -eval$gradf
+        }
+        else {
+          # evaluate gradient at anticipated next point
+          xnag <- x + beta*(x-xprevious)
+          evalnag <- f.gradf(x=xnag,f=fun,h=1.e-8)
+          nbFun <- nbFun+1 # this is a really basic accounting for the numerical cost
+          # of the gradient evaluation. In fact, if done with finite differences, 
+          # it costs d+1 evaluations. The cost of 1 is more in the spirit of having 
+          # an analytical evaluation of the gradient such as with retropropagation in NN.
+          # For the same reason we don't account for xnag in the best point so far 
+          # (it might only be a gradient evaluation).
+          step <- -evalnag$gradf + beta*previous_step
+        }
       }
-      else {
-        # evaluate gradient at anticipated next point
-        xnag <- x + beta*(x-xprevious)
-        evalnag <- f.gradf(x=xnag,f=fun,h=1.e-8)
-        nbFun <- nbFun+1 # this is a really basic accounting for the numerical cost
-        # of the gradient evaluation. In fact, if done with finite differences, 
-        # it costs d+1 evaluations. The cost of 1 is more in the spirit of having 
-        # an analytical evaluation of the gradient such as with retropropagation in NN.
-        # For the same reason we don't account for xnag in the best point so far 
-        # (it might only be a gradient evaluation).
-        step <- -evalnag$gradf + beta*previous_step
-      }
-    }
-    else{stop("unknown direction_type")}
-    # if the current point is near a boundary, the direction should be projected on that boundary
-    tol <- 1.e-15
-    violation <- ifelse(x>(LB+tol),0,-1) + ifelse(x<(UB-tol),0,1)
-    step[which(violation*step>0)]<-0
-    #
-    rawStepSize <- l2norm(step)
-    direction <- step/rawStepSize
+      else{stop("unknown direction_type")}
+      # if the current point is near a boundary, the direction should be projected on that boundary
+      tol <- 1.e-15
+      violation <- ifelse(x>(LB+tol),0,-1) + ifelse(x<(UB-tol),0,1)
+      step[which(violation*step>0)]<-0
+      #
+      rawStepSize <- l2norm(step)
+      direction <- step/rawStepSize
     
-    # no line search, step size proportional to gradient norm
-    if (linesearch_type == "none"){
-      stepSize <- stepFactor*rawStepSize
-      xcandidate <- x + stepSize*direction
-      # project on bounds if necessary
-      xnew <- ifelse(xcandidate < LB, LB, ifelse(xcandidate > UB, UB, xcandidate))
-      # evaluate new point
-      eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
-      normGrad <- l2norm(eval$gradf)
-      nbFun <- nbFun+2 # +2 , +1 for the obj function, +1 for the gradient
-      if (printlevel >=3 ) {rec <- updateRec(arec=rec,x=xnew,f=eval$fofx,t=nbFun)}
-    } 
-    else if (linesearch_type=="armijo"){
-      lsres <- BacktrackLineSearch(x=x,fofx=eval$fofx,gradf=eval$gradf,
-                                   direction=direction,f=fun,LB=LB,UB=UB,
-                                   printlevel=printlevel,nbFun=nbFun)
-      xnew <- lsres$xnew
-      nbFun <- nbFun+lsres$nFcalls
-      nbFunLS <- nbFunLS + lsres$nFcalls
-      # re-evaluate for the gradient and increment nbFun of 1 only 
-      # as the point has already been calculated in linesearch
-      eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
-      nbFun <- nbFun+1
-      normGrad <- l2norm(eval$gradf)
-      if (printlevel>=3) {
-        rec <- updateRec(arec=rec,x=lsres$rec$X,f=lsres$rec$F,t=lsres$rec$Time)
+      # no line search, step size proportional to gradient norm
+      if (linesearch_type == "none"){
+        stepSize <- stepFactor*rawStepSize
+        xcandidate <- x + stepSize*direction
+        # project on bounds if necessary
+        xnew <- ifelse(xcandidate < LB, LB, ifelse(xcandidate > UB, UB, xcandidate))
+        # evaluate new point
+        eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
+        normGrad <- l2norm(eval$gradf)
+        nbFun <- nbFun+2 # +2 , +1 for the obj function, +1 for the gradient
+        if (printlevel >=3 ) {rec <- updateRec(arec=rec,x=xnew,f=eval$fofx,t=nbFun)}
+      } 
+      else if (linesearch_type=="armijo"){
+        lsres <- BacktrackLineSearch(x=x,fofx=eval$fofx,gradf=eval$gradf,
+                                     direction=direction,f=fun,LB=LB,UB=UB,
+                                     printlevel=printlevel,nbFun=nbFun)
+        xnew <- lsres$xnew
+        nbFun <- nbFun+lsres$nFcalls
+        nbFunLS <- nbFunLS + lsres$nFcalls
+        # re-evaluate for the gradient and increment nbFun of 1 only 
+        # as the point has already been calculated in linesearch
+        eval <- f.gradf(x=xnew,f=fun,h=1.e-8)
+        nbFun <- nbFun+1
+        normGrad <- l2norm(eval$gradf)
+        if (printlevel>=3) {
+          rec <- updateRec(arec=rec,x=lsres$rec$X,f=lsres$rec$F,t=lsres$rec$Time)
+        }
       }
-    }
-    else {
-      stop("unknown algo_type")
-    }
-    # make the step
-    iter <- iter+1
-    previous_step <- step
-    xprevious <- x
-    x <- xnew
-    # stopping conditions
-    if (nbFun >= budget){stopBudget<-TRUE}
-    if ((normGrad/sqrt(d)) <= minGradNorm){stopGradNorm<-TRUE}
-    if (l2norm(x-xprevious) <= minStepSize){stopStepSize<-TRUE}
+      else {
+        stop("unknown algo_type")
+      }
+      # make the step
+      iter <- iter+1
+      previous_step <- step
+      xprevious <- x
+      x <- xnew
+      # stopping conditions
+      if (nbFun >= budget){stopBudget<-TRUE}
+      if ((normGrad/sqrt(d)) <= minGradNorm){stopGradNorm<-TRUE}
+      if (l2norm(x-xprevious) <= minStepSize){stopStepSize<-TRUE}
     
-    # bookkeeping
-    if (eval$fofx < fbest) {
-      fbest <- eval$fofx
-      xbest <- x
-      if (printlevel >=1) {
-        rBest <- updateRec(arec=rBest,x=xnew,f=fbest,t=nbFun)
+      # bookkeeping
+      if (eval$fofx < fbest) {
+        fbest <- eval$fofx
+        xbest <- x
+        if (printlevel >=1) {
+          rBest <- updateRec(arec=rBest,x=xnew,f=fbest,t=nbFun)
+        }
       }
-    }
-    if (!silent){
-      cat(" iteration : ",iter,"\r")
-    } 
-  } # end while of main loop
+      if (!silent){
+        cat(" iteration : ",iter,"\r")
+      } 
+    } # end while of main loop
+  } # end of if not starting from flat region
   
   # gather final results
   res <- list()
