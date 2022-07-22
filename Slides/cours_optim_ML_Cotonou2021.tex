@@ -437,7 +437,7 @@ Repeat steps along the steepest descent direction, $-\grad f(x^t)$ \cite{cauchy1
 The size of the steps is proportional to the gradient norm.
 \begin{block}{}
 \begin{algorithmic}
-\REQUIRE $f()$, $\alpha \in ]0,1]$, $x^1$, $\epsilon^{\text{step}}$, $\epsilon^{\text{grad}}$, $i^{\text{max}}$
+\REQUIRE $f()$, $\bar\alpha \in ]0,1]$, $x^1$, $\epsilon^{\text{step}}$, $\epsilon^{\text{grad}}$, $i^{\text{max}}$
 \STATE $i\leftarrow 0$, $f^{\text{best so far}} \leftarrow $ \texttt{max\_double}
 \REPEAT 
 \STATE $i \leftarrow i+1$
@@ -446,7 +446,7 @@ The size of the steps is proportional to the gradient norm.
 \STATE update $x^{\text{best so far}}$ and $f^{\text{best so far}}$ with current iterate
 \ENDIF
 \STATE \textbf{direction: } $d^i = - \grad f(x^i) / \lVert \grad f(x^i) \rVert$
-\STATE \textbf{step: } $x^{i+1} ~=~ x^i + \alpha \lVert \grad f(x^i) \rVert d^i$
+\STATE \textbf{step: } $x^{i+1} ~=~ x^i + \bar\alpha \lVert \grad f(x^i) \rVert d^i$
 \UNTIL{ {$i>i^{\text{max}}$} \OR {$\lVert x^i - x^{i-1}\rVert \le \epsilon^{\text{step}}$} \OR {$\lVert \grad f(x^i)\rVert \le \epsilon^{\text{grad}}$} }
 \RETURN $x^{\text{best so far}}$ and $f^{\text{best so far}}$
 \end{algorithmic}
@@ -473,7 +473,7 @@ The size of the steps is proportional to the gradient norm.
 \begin{frame}
 \frametitle{Fixed step steepest descent algorithm (2)} 
 \begin{itemize}
-\item The choice of the step size factor $\alpha$ is critical : the steeper the function, the smaller $\alpha$. Default value = 0.1
+\item The choice of the step size factor $\bar\alpha$ is critical : the steeper the function, the smaller $\bar\alpha$. Default value = 0.1
 \item The true code (cf. \texttt{gradient\_descent.R}) is much longer and filled with instructions for reporting the points visited and doing plots afterwards.
 \end{itemize}
 \vspace{-0.5cm}
@@ -492,7 +492,7 @@ The size of the steps is proportional to the gradient norm.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Fixed step steepest descent algorithm (3)} 
-$\alpha=0.1$ on $f(x)=$ Rosenbrock (banana shaped) function in $d=2$ dimensions, example of divergence:
+$\bar\alpha=0.1$ on $f(x)=$ Rosenbrock (banana shaped) function in $d=2$ dimensions, example of divergence:
 \vskip\baselineskip
 \begin{center}
 \begin{minipage}[b]{0.3\textwidth}
@@ -659,12 +659,12 @@ If the direction is the gradient,
 \frametitle{Gradient with momentum (1)} 
 Recall fixed step gradient descent, 
 \begin{equation*} 
-x^{i+1} = x^i + \alpha s^i  \quad\text{ where }\quad s^i= -\grad f(x^i) 
+x^{i+1}= x^i - \bar\alpha \grad f(x^i) \quad\text{ i.e., }\quad s^i = x^{i+1}-x^i = - \bar\alpha \grad f(x^i)
 \end{equation*} 
-$s^i$, the step, corrected by a fixed or optimized (line search) $\alpha$.
-Introduce a momentum (i.e., a memory) in the search step \cite{polyak1964some},
+$s^i$, the step, eventually corrected by a line search ($x^{i+1}= x^i + \alpha^i s^i/\lVert s^i \rVert$).
+Introduce a momentum (a memory) in the search step \cite{polyak1964some},
 \begin{equation*} 
-s^i = -\grad f(x^i) + \beta s^{i-1}
+s^i = - \bar\alpha\grad f(x^i) + \beta (x^i - x^{i-1})
 \end{equation*} 
 where\footnote{alternatively, for iteration varying momentum, $\beta^i=(i-2)/(i+1)$} $\beta = 0.9$.\\
 \vspace{-0.6cm}
@@ -708,7 +708,7 @@ The momentum acceleration allows to find the solution.
 Same idea as the momentum direction, but anticipate the position of the next point in the gradient calculation
 \cite{nesterov1983method}:
 \begin{equation*} 
-s^i = -\grad f(x^i+\beta (x^i-x^{i-1})) + \beta s^{i-1}
+s^i = -\bar\alpha \grad f(x^i+\beta (x^i-x^{i-1})) + \beta (x^i-x^{i-1})
 \end{equation*} 
 \begin{minipage}[c]{0.5\textwidth}
 On the sketch, $\grad f$ turns upwards and the step is adjusted accordingly.\\

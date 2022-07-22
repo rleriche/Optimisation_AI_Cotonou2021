@@ -9,7 +9,7 @@ source("./test_functions.R")
 # function dimension
 dim <- 2
 # choose a function from test_functions.R file
-fun <- sphereL1
+fun <- rosen
 # upper and lower bounds
 LB<-c(-5,-5) 
 UB<-c(5,5)

@@ -160,19 +160,19 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
     while (isFALSE(stopBudget) & isFALSE(stopGradNorm) & isFALSE(stopStepSize) ){
       
       if (direction_type=="gradient"){
-        step <- -eval$gradf
+        step <- -stepFactor*eval$gradf
       }
       else if (direction_type=="momentum"){
         if (iter <= 1){
-          step <- -eval$gradf
+          step <- -stepFactor*eval$gradf
         }
         else {
-          step <- -eval$gradf + beta*previous_step
+          step <- -stepFactor*eval$gradf + beta*previous_step
         }
       }
       else if (direction_type=="NAG"){
         if (iter <= 1){
-          step <- -eval$gradf
+          step <- -stepFactor*eval$gradf
         }
         else {
           # evaluate gradient at anticipated next point
@@ -184,7 +184,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
           # an analytical evaluation of the gradient such as with retropropagation in NN.
           # For the same reason we don't account for xnag in the best point so far 
           # (it might only be a gradient evaluation).
-          step <- -evalnag$gradf + beta*previous_step
+          step <- -stepFactor*evalnag$gradf + beta*previous_step
         }
       }
       else{stop("unknown direction_type")}
@@ -198,8 +198,10 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
     
       # no line search, step size proportional to gradient norm
       if (linesearch_type == "none"){
-        stepSize <- stepFactor*rawStepSize
-        xcandidate <- x + stepSize*direction
+        # stepSize <- stepFactor*rawStepSize # bug correction in july 2022
+        # stepSize <- stepFactor*rawStepSize
+        # xcandidate <- x + stepSize*direction
+        xcandidate <- x + step
         # project on bounds if necessary
         xnew <- ifelse(xcandidate < LB, LB, ifelse(xcandidate > UB, UB, xcandidate))
         # evaluate new point
@@ -229,7 +231,7 @@ gradient_descent <- function(pbFormulation,algoParam,printlevel=1){
       }
       # make the step
       iter <- iter+1
-      previous_step <- step
+      previous_step <- xnew-x
       xprevious <- x
       x <- xnew
       # stopping conditions

@@ -15,8 +15,8 @@ source('restarted_descent.R')
 ### problem definition
 # search space
 pbFormulation <- list()
-pbFormulation$fun<-sphereL1 #function to minimize, examples in test_functions.R
-d<-10
+pbFormulation$fun<-rosen #function to minimize, examples in test_functions.R
+d<-2
 pbFormulation$d<-d # dimension
 pbFormulation$LB<-rep(-5,d) #lower bounds
 pbFormulation$UB<-rep(5,d) #upper bounds
@@ -38,9 +38,9 @@ optAlgoParam$beta <- 0.9 # momentum term for direction_type == "momentum" or "NA
 printlevel <- 4 # controls how much is stored and printed, choices: 0 to 4
 
 # a single descent
-# res<-gradient_descent(pbFormulation=pbFormulation,algoParam=optAlgoParam,printlevel=printlevel)
+res<-gradient_descent(pbFormulation=pbFormulation,algoParam=optAlgoParam,printlevel=printlevel)
 
 # a restarted descent
-optAlgoParam$nb_restarts <- 4
-cres <- restarted_descent(pbFormulation=pbFormulation,algoParam = optAlgoParam,printlevel=printlevel)
+# optAlgoParam$nb_restarts <- 4
+# cres <- restarted_descent(pbFormulation=pbFormulation,algoParam = optAlgoParam,printlevel=printlevel)
   
